@@ -19,6 +19,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import org.standardserve.googletestunit.fileio.RootPath
+import org.standardserve.googletestunit.fileio.TokenReadAndWrite
 
 import org.standardserve.googletestunit.login.textValidation
 import kotlin.concurrent.thread
@@ -36,7 +37,59 @@ class LoginActivity:AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         context = this
+        checkTokenLogin()
         init()
+    }
+
+    fun checkTokenLogin(){
+        RootPath.setContext(context)
+        val token = TokenReadAndWrite.readToken(RootPath.getCacheDir())
+        var url = "http://138.68.65.184:5000/api/login"
+        var formData = JSONObject()
+        formData.put("mode", "token")
+        formData.put("token", token)
+        var strForm = formData.toString()
+        val requestBody = strForm?.let {
+            val contentType: MediaType = "application/json".toMediaType()
+            strForm.toRequestBody(contentType)
+        } ?: run {
+            FormBody.Builder().build()
+        }
+        thread {
+            var client = OkHttpClient()
+            var request = Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build()
+            var response = client.newCall(request).execute()
+            var resData = response.body?.string()
+            if(resData != null) {
+                val receiveObj = JSONObject(resData)
+                val status = receiveObj.getString("status")
+
+                RootPath.setContext(this)
+
+                if (status.toInt() == 0) {
+                    //TODO: login success
+                    TokenReadAndWrite.destroyToken(RootPath.getCacheDir())
+                    val token = receiveObj.getString("token")
+                    TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token)
+
+                }else{
+                    TokenReadAndWrite.destroyToken(RootPath.getCacheDir())
+                    Looper.prepare()
+                    Toast.makeText(this, "Login token check failure, please enter your password", Toast.LENGTH_SHORT).show()
+                    Looper.loop()
+                }
+
+
+            }else{
+                Looper.prepare()
+                Toast.makeText(this, "Login failed due to request error", Toast.LENGTH_SHORT).show()
+                Looper.loop()
+            }
+        }
+
     }
 
     fun init() {
@@ -103,6 +156,7 @@ class LoginActivity:AppCompatActivity() {
                             if (status.toInt() == 0) {
                                 //TODO: login success
                                 val token = receiveObj.getString("token")
+                                TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token)
                             }
 
 
