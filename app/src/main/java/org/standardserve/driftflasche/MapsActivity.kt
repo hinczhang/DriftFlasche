@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnTokenCanceledListener
 import org.standardserve.driftflasche.PermissionUtil.PermissionDeniedDialog.Companion.newInstance
 import org.standardserve.driftflasche.PermissionUtil.isPermissionGranted
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding
+import kotlin.properties.Delegates
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     LocationSource.OnLocationChangedListener, GoogleMap.OnMyLocationClickListener,
@@ -36,6 +37,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private lateinit var loginButton: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var firstBackTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +65,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun permissionInit(){
         OverallPermission.enableExternalStoragePermission(this)
+    }
+
+    /*
+    * Define a turn back request
+    * */
+    override fun onBackPressed() {
+        if (System.currentTimeMillis() - firstBackTime > 2000) {
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show()
+            firstBackTime = System.currentTimeMillis()
+        } else {
+            super.onBackPressed()
+            System.exit(0)
+        }
     }
 
     /**

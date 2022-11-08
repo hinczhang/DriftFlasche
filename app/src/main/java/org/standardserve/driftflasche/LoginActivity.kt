@@ -74,6 +74,8 @@ class LoginActivity:AppCompatActivity() {
                     TokenReadAndWrite.destroyToken(RootPath.getCacheDir())
                     val token = receiveObj.getString("token")
                     TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token)
+                    var mapIntent = Intent(this, MapsActivity::class.java)
+                    startActivity(mapIntent)
 
                 }else{
                     TokenReadAndWrite.destroyToken(RootPath.getCacheDir())
@@ -147,16 +149,20 @@ class LoginActivity:AppCompatActivity() {
                         if(resData != null) {
                             val receiveObj = JSONObject(resData)
                             val status = receiveObj.getString("status")
-                            Looper.prepare()
+
                             //Toast.makeText(context, receiveObj.getString("msg"), Toast.LENGTH_SHORT).show()
                             RootPath.setContext(this)
-                            Toast.makeText(context, RootPath.getCacheDir(), Toast.LENGTH_SHORT).show()
-                            Looper.loop()
+                            val msg = receiveObj.getString("msg")
+                            //Looper.prepare()
+                            //Toast.makeText(context, msg + ' ' + status, Toast.LENGTH_SHORT).show()
+                            //Looper.loop()
                             //Log.d("Login Status", RootPath.getCacheDir())
                             if (status.toInt() == 0) {
                                 //TODO: login success
                                 val token = receiveObj.getString("token")
                                 TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token)
+                                var mapIntent = Intent(this, MapsActivity::class.java)
+                                startActivity(mapIntent)
                             }
 
 

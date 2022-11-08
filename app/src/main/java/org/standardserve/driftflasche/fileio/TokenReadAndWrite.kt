@@ -26,13 +26,14 @@ object TokenReadAndWrite {
     }
 
     fun writeToken(cacheDir: String, token: String) {
-        var db = SQLiteDatabase.openOrCreateDatabase(cacheDir + "/token.db", null)
-        db.execSQL("CREATE TABLE IF NOT EXISTS token (token TEXT)")
+        var db = SQLiteDatabase.openOrCreateDatabase("$cacheDir/token.db", null)
+        db.execSQL("CREATE TABLE IF NOT EXISTS token (token TEXT primary key)")
         db.execSQL("INSERT INTO token VALUES ('$token')")
         return
     }
+
     fun destroyToken(cacheDir: String) {
-        var db = SQLiteDatabase.openOrCreateDatabase(cacheDir + "/token.db", null)
+        var db = SQLiteDatabase.openOrCreateDatabase("$cacheDir/token.db", null)
         db.execSQL("DROP TABLE IF EXISTS token")
         return
     }
