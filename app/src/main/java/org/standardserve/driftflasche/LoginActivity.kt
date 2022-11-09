@@ -41,7 +41,7 @@ class LoginActivity:AppCompatActivity() {
         init()
     }
 
-    fun checkTokenLogin(){
+    private fun checkTokenLogin(){
         RootPath.setContext(context)
         val token = TokenReadAndWrite.readToken(RootPath.getCacheDir())
         var url = "http://138.68.65.184:5000/api/login"
@@ -74,8 +74,7 @@ class LoginActivity:AppCompatActivity() {
                     TokenReadAndWrite.destroyToken(RootPath.getCacheDir())
                     val token = receiveObj.getString("token")
                     TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token)
-                    var mapIntent = Intent(this, MapsActivity::class.java)
-                    startActivity(mapIntent)
+                    onSucessJump(receiveObj.getString("username"), token)
 
                 }else{
                     TokenReadAndWrite.destroyToken(RootPath.getCacheDir())
@@ -94,7 +93,7 @@ class LoginActivity:AppCompatActivity() {
 
     }
 
-    fun init() {
+    private fun init() {
         loginBtn = findViewById(R.id.loginBtn)
         registerBtn = findViewById(R.id.registerBtn)
         emailView = findViewById(R.id.editEmailAddress)
@@ -161,8 +160,7 @@ class LoginActivity:AppCompatActivity() {
                                 //TODO: login success
                                 val token = receiveObj.getString("token")
                                 TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token)
-                                var mapIntent = Intent(this, MapsActivity::class.java)
-                                startActivity(mapIntent)
+                                onSucessJump(receiveObj.getString("username"), token)
                             }
 
 
@@ -188,6 +186,13 @@ class LoginActivity:AppCompatActivity() {
         }
 
 
+    }
+
+    private fun onSucessJump(username: String, token: String){
+        var mapIntent = Intent(this, MapsActivity::class.java)
+        mapIntent.putExtra("username", username)
+        mapIntent.putExtra("token", token)
+        startActivity(mapIntent)
     }
 
 

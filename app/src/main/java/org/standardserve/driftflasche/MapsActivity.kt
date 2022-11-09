@@ -33,18 +33,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private var permissionDenied = false
-    private lateinit var loginIntent: Intent
-
-    private lateinit var loginButton: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    private lateinit var token: String
+    private lateinit var usernmae: String
+    private lateinit var loginIntet : Intent
+
     private var firstBackTime = 0L
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        loginIntet = Intent(this, LoginActivity::class.java)
+        token = intent.getStringExtra("token").toString()
+        usernmae = intent.getStringExtra("username").toString()
         permissionInit()
         componentInit()
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -54,12 +62,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun componentInit(){
-        loginButton = findViewById(R.id.loginWindow)
-        loginButton.setOnClickListener {
-            loginIntent = Intent(this, LoginActivity::class.java)
-            startActivity(loginIntent)
-
-        }
 
     }
 
@@ -91,8 +93,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      */
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
-
-
         mMap = googleMap
 
         googleMap.setOnMyLocationButtonClickListener(this)
