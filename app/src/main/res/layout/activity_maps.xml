@@ -18,7 +18,7 @@
             android:id="@+id/map_fragment"
             class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="587dp"
+            android:layout_height="684dp"
             map:uiZoomControls="true" />
 
         <LinearLayout
@@ -27,8 +27,8 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/msgButton"
-                android:layout_width="231dp"
+                android:id="@+id/bottleButton"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Button" />
 
@@ -40,15 +40,17 @@
         android:id="@+id/drawer_start"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#eda02c"
+        android:background="#F1ECE6"
         android:layout_gravity="start"
         >
         <TextView
+            android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="侧边栏"
-            android:textColor="#fff"
+            android:text="sidebar"
+            android:textColor="#070505"
+            android:textSize="30sp"
             />
     </LinearLayout>
 

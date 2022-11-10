@@ -8,6 +8,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -17,6 +18,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -26,14 +28,16 @@ import org.standardserve.driftflasche.PermissionUtil.isPermissionGranted
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding
 import kotlin.properties.Delegates
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
     LocationSource.OnLocationChangedListener, GoogleMap.OnMyLocationClickListener,
     GoogleMap.OnMyLocationButtonClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+    private lateinit var userName_sidebar: TextView
     private var permissionDenied = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var bottleButton: Button
 
     private lateinit var token: String
     private lateinit var usernmae: String
@@ -60,9 +64,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             .findFragmentById(R.id.map_fragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
-
+    @SuppressLint("MissingPermission")
     private fun componentInit(){
+        userName_sidebar = findViewById(R.id.username)
+        userName_sidebar.text = usernmae
+        bottleButton = findViewById(R.id.bottleButton)
+        bottleButton.setOnClickListener {
+            fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
+                override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
+                override fun isCancellationRequested() = false
+            }).addOnSuccessListener { location: Location? ->
+                if (location == null){
+                    Toast.makeText(this, "Cannot get location.", Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    val lat = location.latitude
+                    val lon = location.longitude
+                    val furtherPoint = LatLng(lat, lon)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint))
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(17F));
+                    var marker = mMap.addMarker(MarkerOptions().position(furtherPoint).title("Current Marker"))
+                    //Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show()
+                }
 
+            }
+
+        }
     }
 
     private fun permissionInit(){
@@ -97,6 +124,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
         googleMap.setOnMyLocationButtonClickListener(this)
         googleMap.setOnMyLocationClickListener(this)
+        googleMap.setOnMarkerClickListener(this)
         enableLocalization()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
@@ -111,7 +139,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 val lon = location.longitude
                 val furtherPoint = LatLng(lat, lon)
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint))
-                mMap.moveCamera(CameraUpdateFactory.zoomTo(15F));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(15F))
                 Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show()
             }
 
@@ -240,5 +268,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      */
     private fun showMissingPermissionError() {
         newInstance(true).show(supportFragmentManager, "dialog")
+    }
+
+    override fun onMarkerClick(p0: Marker): Boolean {
+        return false
     }
 }
