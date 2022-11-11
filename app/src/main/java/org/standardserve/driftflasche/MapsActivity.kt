@@ -16,6 +16,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -26,7 +27,6 @@ import com.google.android.gms.tasks.OnTokenCanceledListener
 import org.standardserve.driftflasche.PermissionUtil.PermissionDeniedDialog.Companion.newInstance
 import org.standardserve.driftflasche.PermissionUtil.isPermissionGranted
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding
-import kotlin.properties.Delegates
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
     LocationSource.OnLocationChangedListener, GoogleMap.OnMyLocationClickListener,
@@ -45,9 +45,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private var firstBackTime = 0L
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,6 +61,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             .findFragmentById(R.id.map_fragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
+
     @SuppressLint("MissingPermission")
     private fun componentInit(){
         userName_sidebar = findViewById(R.id.username)
@@ -83,7 +81,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     val furtherPoint = LatLng(lat, lon)
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint))
                     mMap.moveCamera(CameraUpdateFactory.zoomTo(17F));
-                    var marker = mMap.addMarker(MarkerOptions().position(furtherPoint).title("Current Marker"))
+                    var marker = mMap.addMarker(MarkerOptions().position(furtherPoint).title("Current Marker").icon(
+                        BitmapDescriptorFactory.fromResource(R.drawable.info_driftbottle)))
                     //Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show()
                 }
 
