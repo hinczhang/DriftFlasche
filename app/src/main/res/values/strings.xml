@@ -35,6 +35,13 @@
     <string name="bottle_type_info">info</string>
     <string name="bottle_type_mood">mood</string>
     <string name="bottle_type_warn">warn</string>
+    <string name="confirm">Confirm</string>
+    <string name="decline">Decline</string>
+    <string name="bottle_creation_dialog_title">Create a bottle</string>
 
     <string name="content"> Please input your content </string>
+
+    <!-- Strings used for side drawer -->
+    <string name="bar_menu1"> Content </string>
+    <string name="bar_menu2"> Account </string>
 </resources>

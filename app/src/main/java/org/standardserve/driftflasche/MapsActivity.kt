@@ -24,6 +24,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.textview.MaterialTextView
 import org.standardserve.driftflasche.PermissionUtil.PermissionDeniedDialog.Companion.newInstance
 import org.standardserve.driftflasche.PermissionUtil.isPermissionGranted
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding
@@ -41,7 +43,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var bottleButton: Button
 
     private lateinit var token: String
-    private lateinit var usernmae: String
+    private lateinit var username: String
     private lateinit var loginIntet : Intent
 
     private var firstBackTime = 0L
@@ -54,7 +56,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         setContentView(binding.root)
         loginIntet = Intent(this, LoginActivity::class.java)
         token = intent.getStringExtra("token").toString()
-        usernmae = intent.getStringExtra("username").toString()
+        username = intent.getStringExtra("username").toString()
         permissionInit()
         componentInit()
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -65,8 +67,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     @SuppressLint("MissingPermission")
     private fun componentInit(){
-        userName_sidebar = findViewById(R.id.username)
-        userName_sidebar.text = usernmae
+        userName_sidebar = findViewById<NavigationView>(R.id.nav_view).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username)
+        userName_sidebar.text = username
         bottleButton = findViewById(R.id.bottleButton)
         bottleButton.setOnClickListener {
             /*fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
