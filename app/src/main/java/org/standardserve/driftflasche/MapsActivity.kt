@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnTokenCanceledListener
 import org.standardserve.driftflasche.PermissionUtil.PermissionDeniedDialog.Companion.newInstance
 import org.standardserve.driftflasche.PermissionUtil.isPermissionGranted
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding
+import org.standardserve.driftflasche.dialog.MarkerCreationDialog
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
     LocationSource.OnLocationChangedListener, GoogleMap.OnMyLocationClickListener,
@@ -68,7 +69,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         userName_sidebar.text = usernmae
         bottleButton = findViewById(R.id.bottleButton)
         bottleButton.setOnClickListener {
-            fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
+            /*fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
                 override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
                 override fun isCancellationRequested() = false
             }).addOnSuccessListener { location: Location? ->
@@ -86,7 +87,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     //Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show()
                 }
 
-            }
+            }*/
+            MarkerCreationDialog.create(this)
 
         }
     }

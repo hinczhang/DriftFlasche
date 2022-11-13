@@ -10,7 +10,7 @@
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
 
@@ -22,4 +22,13 @@
     <style name="Theme.DriftFlasche.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.DriftFlasche.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="MaterialComponents_Theme" parent="Theme.MaterialComponents.Light.NoActionBar">
+          <item name="colorPrimary">@color/purple_500</item>
+          <item name="colorPrimaryVariant">@color/purple_700</item>
+          <item name="colorOnPrimary">@color/white</item>
+          <item name="colorSecondary">@color/teal_200</item>
+          <item name="colorSecondaryVariant">@color/teal_700</item>
+          <item name="colorOnSecondary">@color/black</item>
+          <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+    </style>
 </resources>
