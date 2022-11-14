@@ -44,4 +44,12 @@
     <!-- Strings used for side drawer -->
     <string name="bar_menu1"> Content </string>
     <string name="bar_menu2"> Account </string>
+
+    <string name="profile"> Profile </string>
+    <string name="own_bottles"> Bottles </string>
+    <string name="settings"> Settings </string>
+
+    <string name="about"> About </string>
+    <string name="logout"> Logout </string>
+
 </resources>

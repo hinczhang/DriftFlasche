@@ -71,7 +71,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         userName_sidebar.text = username
         bottleButton = findViewById(R.id.bottleButton)
         bottleButton.setOnClickListener {
-            /*fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
+            fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
                 override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
                 override fun isCancellationRequested() = false
             }).addOnSuccessListener { location: Location? ->
@@ -81,16 +81,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 else {
                     val lat = location.latitude
                     val lon = location.longitude
+                    MarkerCreationDialog.create(this, username, lat, lon, token)
                     val furtherPoint = LatLng(lat, lon)
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint))
-                    mMap.moveCamera(CameraUpdateFactory.zoomTo(17F));
-                    var marker = mMap.addMarker(MarkerOptions().position(furtherPoint).title("Current Marker").icon(
-                        BitmapDescriptorFactory.fromResource(R.drawable.info_driftbottle)))
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(17F))
+                    //var marker = mMap.addMarker(MarkerOptions().position(furtherPoint).title("Current Marker").icon(
+                    //    BitmapDescriptorFactory.fromResource(R.drawable.info_driftbottle)))
                     //Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show()
                 }
 
-            }*/
-            MarkerCreationDialog.create(this)
+            }
+
 
         }
     }

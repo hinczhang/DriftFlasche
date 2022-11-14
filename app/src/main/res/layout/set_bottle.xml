@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:text="@string/bottle_type_info"
             android:textSize="14sp"
+            app:cornerRadius="18dp"
             />
         <Button
             style="?attr/materialButtonOutlinedStyle"
@@ -42,6 +43,7 @@
             android:layout_height="wrap_content"
             android:text="@string/bottle_type_warn"
             android:textSize="14sp"
+            app:cornerRadius="18dp"
             />
     </com.google.android.material.button.MaterialButtonToggleGroup>
     <com.google.android.material.textfield.TextInputLayout
