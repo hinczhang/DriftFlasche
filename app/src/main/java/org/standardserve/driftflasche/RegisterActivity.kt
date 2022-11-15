@@ -15,7 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import org.standardserve.googletestunit.login.textValidation
+import org.standardserve.driftflasche.login.textValidation
 import kotlin.concurrent.thread
 
 class RegisterActivity: AppCompatActivity() {
