@@ -59,33 +59,12 @@ public class MarkerCreationDialog {
                 }
         );
     }
-/*
-    private static void setDialogText(TextInputLayout textView){
-        textView.addTextChangedListener(
-                new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        bootleContent = s.toString();
-                    }
-                }
-        );
-    }
-*/
     public static void create(Context context, String username, Double lat, Double lng, String token) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.set_bottle, null);
-        MaterialButtonToggleGroup toogleButton = (MaterialButtonToggleGroup)view.findViewById(R.id.bottleType);
-        TextInputLayout dialogText = (TextInputLayout)view.findViewById(R.id.comment);
+        MaterialButtonToggleGroup toogleButton = view.findViewById(R.id.bottleType);
+        TextInputLayout dialogText = view.findViewById(R.id.comment);
         setToogleButton(toogleButton);
         //setDialogText(dialogText);
         AlertDialog builder = new MaterialAlertDialogBuilder(context)
@@ -101,6 +80,7 @@ public class MarkerCreationDialog {
                             .add("type", bootleType.toString())
                             .add("content", bootleContent)
                             .add("token", token)
+                            .add("mode", "add")
                             .build();
                     String url = "http://138.68.65.184:5000/api/bottle";
                     Request request = new Request.Builder()
@@ -120,7 +100,6 @@ public class MarkerCreationDialog {
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                             String str = response.body().string();
-                            Log.e("MarkerCreationDialog", "onResponse: " + str);
                             if(str != null) {
                                 JSONObject receiveObj = null;
                                 try {
