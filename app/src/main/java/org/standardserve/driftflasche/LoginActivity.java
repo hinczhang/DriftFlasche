@@ -41,8 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordView;
     private Context context;
     private CheckBox checkBox;
-    private Intent registerIntent;
-    //private lateinit var binding: ActivityLoginBinding
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +56,6 @@ public class LoginActivity extends AppCompatActivity {
         String token = TokenReadAndWrite.readToken(RootPath.getCacheDir());
         String url = "http://138.68.65.184:5000/api/login";
 
-        MediaType contentType = MediaType.parse("application/json; charset=utf-8");
         OkHttpClient mOKHttpClient = new OkHttpClient();
         RequestBody formBody = new FormBody.Builder()
                 .add("mode", "token")
