@@ -91,7 +91,6 @@ public class MarkerCreationDialog {
                     call.enqueue(new Callback() {
                         @Override
                         public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            Log.e("MarkerCreationDialog", "onFailure: " + e.getMessage());
                             Looper.prepare();
                             Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
                             Looper.loop();

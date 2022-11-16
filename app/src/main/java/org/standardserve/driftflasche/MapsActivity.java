@@ -26,6 +26,8 @@ import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.google.android.material.navigation.NavigationView;
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding;
 import org.standardserve.driftflasche.dialog.MarkerCreationDialog;
+import org.standardserve.driftflasche.dialog.bottlesReload;
+
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
     LocationSource.OnLocationChangedListener, GoogleMap.OnMyLocationClickListener,
@@ -61,7 +63,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @SuppressLint("MissingPermission")
     private void componentInit(){
-        NavigationView ewe = findViewById(R.id.nav_view);
 
         userName_sidebar = ((NavigationView)findViewById(R.id.nav_view)).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username);
         userName_sidebar.setText(username);
@@ -144,9 +145,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng furtherPoint = new LatLng(lat, lon);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15F));
+                bottlesReload.loadBottlesbyDistance(this, 20, lat, lon, token, username, mMap);
                 Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         fusedLocationClient.getLastLocation()
                         .addOnSuccessListener(
@@ -272,12 +275,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        return;
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        return;
     }
 
 }
