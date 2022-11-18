@@ -38,9 +38,10 @@
     <string name="confirm">Confirm</string>
     <string name="decline">Decline</string>
     <string name="bottle_creation_dialog_title">Create a bottle</string>
+    <string name="bottle_message">Bottle message</string>
 
     <string name="content"> Please input your content </string>
-
+    <string name="comment"> Please input your comment</string>
     <!-- Strings used for side drawer -->
     <string name="bar_menu1"> Content </string>
     <string name="bar_menu2"> Account </string>
@@ -51,5 +52,8 @@
 
     <string name="about"> About </string>
     <string name="logout"> Logout </string>
+
+    <string name="delete"> Delete </string>
+    <string name="textview">TextView</string>
 
 </resources>

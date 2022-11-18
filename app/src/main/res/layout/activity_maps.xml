@@ -37,7 +37,7 @@
                 app:cornerRadius="60dp"
                 android:layout_gravity="bottom|center"
                 app:backgroundTint="#5C2BAE"
-                android:textColor="@color/teal_200"
+                android:textColor="@color/common_google_signin_btn_text_light"
                 android:id="@+id/bottleButton"
                 android:layout_marginBottom="20dp"
                 app:icon="@drawable/add_1x"

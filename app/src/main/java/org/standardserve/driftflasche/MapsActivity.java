@@ -2,6 +2,7 @@ package org.standardserve.driftflasche;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -9,6 +10,8 @@ import android.location.Location;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Looper;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,9 +27,25 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.google.android.material.navigation.NavigationView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding;
 import org.standardserve.driftflasche.dialog.MarkerCreationDialog;
+import org.standardserve.driftflasche.dialog.MarkerInfomationDialog;
 import org.standardserve.driftflasche.dialog.bottlesReload;
+import org.standardserve.driftflasche.fileio.RootPath;
+import org.standardserve.driftflasche.fileio.TokenReadAndWrite;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
@@ -34,23 +53,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleMap.OnMyLocationButtonClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private GoogleMap mMap;
-    private ActivityMapsBinding binding;
-    private TextView userName_sidebar;
     private boolean permissionDenied = false;
     private FusedLocationProviderClient fusedLocationClient;
-    private Button bottleButton;
 
+    private Context context = this;
     private String token;
     private String username;
-    private Intent loginIntent;
 
     private float firstBackTime = 0L;
+
+    private Double globalLat = 0.0;
+    private Double globalLng = 0.0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        org.standardserve.driftflasche.databinding.ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        loginIntent = getIntent();
+        Intent loginIntent = getIntent();
         token = loginIntent.getStringExtra("token");
         username = loginIntent.getStringExtra("username");
         permissionInit();
@@ -58,15 +77,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
             .findFragmentById(R.id.map_fragment);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
     }
 
     @SuppressLint("MissingPermission")
     private void componentInit(){
-
-        userName_sidebar = ((NavigationView)findViewById(R.id.nav_view)).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username);
+        TextView userName_sidebar = ((NavigationView) findViewById(R.id.nav_view)).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username);
         userName_sidebar.setText(username);
-        bottleButton = findViewById(R.id.bottleButton);
+
+        MenuItem logout = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.logout_item);
+        logout.setOnMenuItemClickListener(item -> {
+            RootPath.setContext(getApplicationContext());
+            TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
+            Intent loginIntent = new Intent(MapsActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
+            return true;
+        });
+        //TODO: add a function to manipulate the bottles
+        MenuItem myBottles = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.bottles_item);
+        myBottles.setOnMenuItemClickListener(item -> {
+            OkHttpClient client = new OkHttpClient();
+            RequestBody formBody = new FormBody.Builder()
+                    .add("token", token)
+                    .add("username", username)
+                .build();
+            String url = "http://138.68.65.184:5000/api/bottle";
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(formBody)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Looper.prepare();
+                    Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
+                }
+            });
+            return true;
+        });
+
+        Button bottleButton = findViewById(R.id.bottleButton);
         bottleButton.setOnClickListener(v -> {
             fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
                 @NonNull
@@ -80,7 +139,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     return false;
                 }
             }).addOnSuccessListener(location -> {
-                MarkerCreationDialog.create(this, username, location.getLatitude(), location.getLongitude(), token);
+                globalLat = location.getLatitude();
+                globalLng = location.getLongitude();
+                MarkerCreationDialog.create(this, username, location.getLatitude(), location.getLongitude(), token, mMap);
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(17F));
@@ -128,7 +189,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
             @NonNull
             @Override
-            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {;
                 return null;
             }
 
@@ -142,6 +203,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }else{
                 double lat = location.getLatitude();
                 double lon = location.getLongitude();
+                globalLat = lat;
+                globalLng = lon;
                 LatLng furtherPoint = new LatLng(lat, lon);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15F));
@@ -152,17 +215,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         fusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(
-                                location -> {
-                                    if (location != null) {
-                                        double lat = location.getLatitude();
-                                        double lon = location.getLongitude();
-                                        LatLng furtherPoint = new LatLng(lat, lon);
-                                        mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
-                                        mMap.moveCamera(CameraUpdateFactory.zoomTo(15F));
-                                        Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                .addOnSuccessListener(
+                        location -> {
+                            if (location != null) {
+                                double lat = location.getLatitude();
+                                double lon = location.getLongitude();
+                                globalLat = lat;
+                                globalLng = lon;
+                                LatLng furtherPoint = new LatLng(lat, lon);
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
+                                mMap.moveCamera(CameraUpdateFactory.zoomTo(15F));
+                                Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show();
+                            }
+                        });
     }
 
 
@@ -210,7 +275,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onRequestPermissionsResult(
-            int requestCode, String[] permissions, int[] grantResults
+            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults
     ){
         if (requestCode != OverallPermission.LOCATION_PERMISSION_REQUEST_CODE) {
             super.onRequestPermissionsResult(
@@ -261,6 +326,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
+        JSONObject obj = (JSONObject) marker.getTag();
+        Toast.makeText(this, obj.toString(), Toast.LENGTH_SHORT).show();
+        try {
+            MarkerInfomationDialog.showMarkerInfomationDialog(this, obj);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
@@ -275,10 +347,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
+        globalLat = location.getLatitude();
+        globalLng = location.getLongitude();
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        globalLat = location.getLatitude();
+        globalLng = location.getLongitude();
     }
 
 }

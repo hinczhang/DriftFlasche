@@ -1,5 +1,6 @@
 package org.standardserve.driftflasche.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
@@ -33,6 +35,7 @@ import org.json.JSONObject;
 import org.standardserve.driftflasche.R;
 
 import java.io.IOException;
+import java.util.Objects;
 
 
 enum BOTTLE_TYPE{
@@ -45,6 +48,7 @@ public class MarkerCreationDialog {
     private static BOTTLE_TYPE bootleType = BOTTLE_TYPE.INFO; // 1: info, 2: mood, 3: warn
     private static String bootleContent = "";
 
+    @SuppressLint("NonConstantResourceId")
     private static void setToogleButton(MaterialButtonToggleGroup toogleButton){
         toogleButton.addOnButtonCheckedListener(
                 (group, checkedId, isChecked) -> {
@@ -60,7 +64,7 @@ public class MarkerCreationDialog {
         );
     }
 
-    public static void create(Context context, String username, Double lat, Double lng, String token) {
+    public static void create(Context context, String username, Double lat, Double lng, String token, GoogleMap map) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.set_bottle, null);
         MaterialButtonToggleGroup toogleButton = view.findViewById(R.id.bottleType);
@@ -72,7 +76,7 @@ public class MarkerCreationDialog {
                 .setPositiveButton(R.string.confirm, (dialog, which) -> {
                     OkHttpClient mOKHttpClient = new OkHttpClient();
                     // TODO: add mediaType, see LoginActivity
-                    bootleContent = dialogText.getEditText().getText().toString();
+                    bootleContent = Objects.requireNonNull(dialogText.getEditText()).getText().toString();
                     RequestBody formBody = new FormBody.Builder()
                             .add("username", username)
                             .add("lat", lat.toString())
@@ -98,8 +102,8 @@ public class MarkerCreationDialog {
 
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            String str = response.body().string();
-                            if(str != null) {
+                            String str = Objects.requireNonNull(response.body()).string();
+                            if(str.length()>0) {
                                 JSONObject receiveObj = null;
                                 try {
                                     receiveObj = new JSONObject(str);
@@ -112,6 +116,7 @@ public class MarkerCreationDialog {
                                 String status = null;
                                 String msg = null;
                                 try {
+                                    assert receiveObj != null;
                                     status = receiveObj.getString("status");
                                     msg = receiveObj.getString("msg");
                                 } catch (JSONException e) {
@@ -120,15 +125,13 @@ public class MarkerCreationDialog {
                                     Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
                                     Looper.loop();
                                 }
-                                if (Integer.valueOf(status) == 0) {
-                                    Looper.prepare();
-                                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                                    Looper.loop();
-                                }else{
-                                    Looper.prepare();
-                                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                                    Looper.loop();
+                                assert status != null;
+                                if(Integer.parseInt(status) == 0){
+                                    bottlesReload.loadBottlesbyDistance(context, 20, lat, lng, token, username,map);
                                 }
+                                Looper.prepare();
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                                Looper.loop();
 
 
                             }else{
@@ -141,7 +144,7 @@ public class MarkerCreationDialog {
                     });
 
                 })
-                .setNegativeButton(R.string.decline, (DialogInterface.OnClickListener) (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(R.string.decline, (dialog, which) -> dialog.dismiss())
                 .setView(view)
                 .create();
         builder.show();
