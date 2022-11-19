@@ -2,35 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="45dp">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/seqNum"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
+        android:layout_marginRight="10dp"
         android:layout_weight="1"
-        android:text="TextView"
+        android:fontFamily="sans-serif"
         android:gravity="center_vertical|left"
-        android:textFontWeight="4"/>
+        android:text="TextView"
+        android:textFontWeight="2" />
 
     <TextView
         android:id="@+id/abstract_content"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
         android:layout_weight="1"
-        android:text="TextView"
-        android:gravity="center_vertical|left"/>
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_vertical|left"
+        android:text="TextView" />
 
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/delete_icon"
-        android:layout_width="wrap_content"
-
-
-        android:layout_height="match_parent"
-        android:layout_gravity="bottom|center"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:contentDescription="@string/delete"
-
+        android:layout_marginRight="0dp"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"
@@ -38,12 +39,13 @@
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
         android:textColor="@color/md_theme_dark_onSecondaryContainer"
-        app:backgroundTint="#FFFFFF"
+        android:gravity="right|center_vertical"
+        app:backgroundTint="#00FFFFFF"
         app:cornerRadius="40dp"
         app:iconTint="@color/md_theme_dark_onError"
         app:icon="@drawable/delete_icon"
-        app:iconSize="40dp"
-        app:iconGravity="textStart"
+        app:iconSize="30dp"
+        app:iconGravity="textEnd"
         app:iconPadding="0dp" />
 
 

@@ -10,6 +10,7 @@ import android.location.Location;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -28,11 +29,13 @@ import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding;
 import org.standardserve.driftflasche.dialog.MarkerCreationDialog;
 import org.standardserve.driftflasche.dialog.MarkerInfomationDialog;
+import org.standardserve.driftflasche.dialog.MyBottlesDialog;
 import org.standardserve.driftflasche.dialog.bottlesReload;
 import org.standardserve.driftflasche.fileio.RootPath;
 import org.standardserve.driftflasche.fileio.TokenReadAndWrite;
@@ -86,7 +89,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView userName_sidebar = ((NavigationView) findViewById(R.id.nav_view)).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username);
         userName_sidebar.setText(username);
 
-        MenuItem logout = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.logout_item);
+        @SuppressLint("CutPasteId") MenuItem logout = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.logout_item);
         logout.setOnMenuItemClickListener(item -> {
             RootPath.setContext(getApplicationContext());
             TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
@@ -96,12 +99,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         });
         //TODO: add a function to manipulate the bottles
-        MenuItem myBottles = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.bottles_item);
+        @SuppressLint("CutPasteId") MenuItem myBottles = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.bottles_item);
         myBottles.setOnMenuItemClickListener(item -> {
             OkHttpClient client = new OkHttpClient();
             RequestBody formBody = new FormBody.Builder()
                     .add("token", token)
                     .add("username", username)
+                    .add("mode", "mybottle")
                 .build();
             String url = "http://138.68.65.184:5000/api/bottle";
             Request request = new Request.Builder()
@@ -119,6 +123,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    String res = response.body().string();
+                    try {
+                        JSONObject jsonObject = new JSONObject(res);
+                        int status = Integer.parseInt(jsonObject.getString("status"));
+
+                        if (status == 0) {
+                            new Handler(Looper.getMainLooper()).post(() ->{
+                                JSONArray bottles = null;
+                                try {
+                                    bottles = jsonObject.getJSONArray("data");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                try {
+                                    MyBottlesDialog.showMyBottlesDialog(context, username, bottles);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        } else {
+                            Looper.prepare();
+                            Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                 }
             });
@@ -126,27 +158,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         Button bottleButton = findViewById(R.id.bottleButton);
-        bottleButton.setOnClickListener(v -> {
-            fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
-                @NonNull
-                @Override
-                public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
-                    return null;
-                }
+        bottleButton.setOnClickListener(v -> fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+            @NonNull
+            @Override
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                return null;
+            }
 
-                @Override
-                public boolean isCancellationRequested() {
-                    return false;
-                }
-            }).addOnSuccessListener(location -> {
-                globalLat = location.getLatitude();
-                globalLng = location.getLongitude();
-                MarkerCreationDialog.create(this, username, location.getLatitude(), location.getLongitude(), token, mMap);
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(17F));
-            });
-        });
+            @Override
+            public boolean isCancellationRequested() {
+                return false;
+            }
+        }).addOnSuccessListener(location -> {
+            globalLat = location.getLatitude();
+            globalLng = location.getLongitude();
+            MarkerCreationDialog.create(this, username, location.getLatitude(), location.getLongitude(), token, mMap);
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(17F));
+        }));
     }
 
     private void permissionInit(){

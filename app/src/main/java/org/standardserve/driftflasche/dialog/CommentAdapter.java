@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import org.standardserve.driftflasche.R;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
-    private JSONArray comments;
+    private final JSONArray comments;
 
     CommentAdapter(JSONArray out_comments){
         comments = out_comments;
@@ -46,7 +46,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView content;
+        private final TextView content;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
