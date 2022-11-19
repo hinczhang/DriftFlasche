@@ -18,6 +18,7 @@ import org.standardserve.driftflasche.R;
 public class MyBottlesDialog {
     private MyBottlesDialog(){}
     public static void showMyBottlesDialog(Context context, String username, JSONArray bottles) throws JSONException {
+        // TODO: Change to the table view
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.my_bottles, null);
 

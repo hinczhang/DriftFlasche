@@ -9,17 +9,18 @@
         android:layout_width="wrap_content"
         android:layout_height="45dp"
         android:layout_marginRight="10dp"
-        android:layout_weight="1"
-        android:fontFamily="sans-serif"
+        android:layout_weight="0"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center_vertical|left"
         android:text="TextView"
+        android:textColor="#000000"
         android:textFontWeight="2" />
 
     <TextView
         android:id="@+id/abstract_content"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:layout_weight="1"
+        android:layout_weight="0"
         android:fontFamily="sans-serif-medium"
         android:gravity="center_vertical|left"
         android:text="TextView" />
@@ -27,7 +28,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/delete_icon"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:contentDescription="@string/delete"
