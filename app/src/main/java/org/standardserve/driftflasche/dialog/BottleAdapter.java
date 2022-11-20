@@ -12,7 +12,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
@@ -71,6 +73,19 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
 
         try {
             String id = bottles.getJSONObject(position).getString("_id");
+            double target_lat = Double.parseDouble(bottles.getJSONObject(position).getJSONObject("position").getString("lat"));
+            double target_lng = Double.parseDouble(bottles.getJSONObject(position).getJSONObject("position").getString("lng"));
+
+            holder.locButton.setOnClickListener(v->{
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    LatLng furtherPoint = new LatLng(target_lat, target_lng);
+                    map.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
+                    map.moveCamera(CameraUpdateFactory.zoomTo(18F));
+                    // TODO: add a marker? but how to remove the marker? a global static array or variable to hold the marker?
+                });
+            });
+
+
             holder.deleteButton.setOnClickListener(v -> {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody formBody = new FormBody.Builder()
@@ -140,7 +155,6 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
                         }
                     }
                 });
-
             });
         } catch (JSONException e) {
             e.printStackTrace();
@@ -158,11 +172,13 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
         private final TextView seqNum;
         private final TextView abstractContent;
         private final MaterialButton deleteButton;
+        private final MaterialButton locButton;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             seqNum = itemView.findViewById(R.id.seqNum);
             abstractContent = itemView.findViewById(R.id.abstract_content);
             deleteButton = itemView.findViewById(R.id.delete_icon);
+            locButton = itemView.findViewById(R.id.loc_bottle);
         }
     }
 }
