@@ -50,7 +50,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/comments"
         android:layout_width="match_parent"
-        android:layout_height="171dp" />
+        android:layout_height="171dp"
+        android:background="#00000000"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/comment"

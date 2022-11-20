@@ -356,10 +356,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
+
         JSONObject obj = (JSONObject) marker.getTag();
         Toast.makeText(this, obj.toString(), Toast.LENGTH_SHORT).show();
         try {
-            MarkerInfomationDialog.showMarkerInfomationDialog(this, obj);
+            MarkerInfomationDialog.showMarkerInfomationDialog(this, obj, token, username);
         } catch (JSONException e) {
             e.printStackTrace();
         }
