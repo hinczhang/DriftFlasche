@@ -1,55 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/seqNum"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_marginRight="10dp"
-        android:layout_weight="0"
-        android:fontFamily="sans-serif-medium"
-        android:gravity="center_vertical|left"
-        android:text="TextView"
-        android:textColor="#000000"
-        android:textFontWeight="2" />
-
-    <TextView
-        android:id="@+id/abstract_content"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_weight="0"
-        android:fontFamily="sans-serif-medium"
-        android:gravity="center_vertical|left"
-        android:text="TextView" />
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/delete_icon"
-        android:layout_width="fill_parent"
-        android:layout_weight="1"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/delete"
-        android:layout_marginRight="0dp"
-        android:insetLeft="0dp"
-        android:insetTop="0dp"
-        android:insetRight="0dp"
-        android:insetBottom="0dp"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp"
-        android:textColor="@color/md_theme_dark_onSecondaryContainer"
-        android:gravity="right|center_vertical"
-        app:backgroundTint="#00FFFFFF"
-        app:cornerRadius="40dp"
-        app:iconTint="@color/md_theme_dark_onError"
-        app:icon="@drawable/delete_icon"
-        app:iconSize="30dp"
-        app:iconGravity="textEnd"
-        app:iconPadding="0dp" />
+        android:layout_weight="0.8"
+        android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/seqNum"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical|left"
+            android:text="TextView"
+            android:textColor="#000000"
+            android:textFontWeight="2" />
 
+        <TextView
+            android:id="@+id/abstract_content"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical|left"
+            android:text="TextView" />
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:orientation="horizontal"
+            android:layout_gravity="right"
+            android:gravity="right">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/delete_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="0dp"
+                android:contentDescription="@string/delete"
+                android:gravity="right|center_vertical"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:textColor="@color/md_theme_dark_onSecondaryContainer"
+                app:backgroundTint="#00FFFFFF"
+                app:cornerRadius="40dp"
+                app:icon="@drawable/delete_icon"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
+                app:iconSize="30dp"
+                app:iconTint="@color/md_theme_dark_onError" />
+        </LinearLayout>
 
 
 </LinearLayout>

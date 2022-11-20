@@ -138,7 +138,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
 
                                 try {
-                                    MyBottlesDialog.showMyBottlesDialog(context, username, bottles);
+                                    MyBottlesDialog.showMyBottlesDialog(context, token, bottles, 20, globalLat, globalLng, username, mMap);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
