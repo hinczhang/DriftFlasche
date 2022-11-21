@@ -9,7 +9,7 @@ public class TokenReadAndWrite {
     @SuppressLint("Range")
     public static String readToken(String cacheDir) {
         SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(cacheDir+"/token.db", null);
-        Cursor cursor = db.rawQuery("SELECT count(*) as C from sqlite_master where type = 'table' and name = 'token'", null);
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery("SELECT count(*) as C from sqlite_master where type = 'table' and name = 'token'", null);
         while(cursor.moveToNext()){
             int count = cursor.getInt(0);
             if(count==0){

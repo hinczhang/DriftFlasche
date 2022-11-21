@@ -76,14 +76,12 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
             double target_lat = Double.parseDouble(bottles.getJSONObject(position).getJSONObject("position").getString("lat"));
             double target_lng = Double.parseDouble(bottles.getJSONObject(position).getJSONObject("position").getString("lng"));
 
-            holder.locButton.setOnClickListener(v->{
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    LatLng furtherPoint = new LatLng(target_lat, target_lng);
-                    map.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
-                    map.moveCamera(CameraUpdateFactory.zoomTo(18F));
-                    // TODO: add a marker? but how to remove the marker? a global static array or variable to hold the marker?
-                });
-            });
+            holder.locButton.setOnClickListener(v-> new Handler(Looper.getMainLooper()).post(() -> {
+                LatLng furtherPoint = new LatLng(target_lat, target_lng);
+                map.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
+                map.moveCamera(CameraUpdateFactory.zoomTo(18F));
+                // TODO: add a marker? but how to remove the marker? a global static array or variable to hold the marker?
+            }));
 
 
             holder.deleteButton.setOnClickListener(v -> {
@@ -102,14 +100,14 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
                 Call call = client.newCall(request);
                 call.enqueue(new okhttp3.Callback() {
                     @Override
-                    public void onFailure(Call call, java.io.IOException e) {
+                    public void onFailure(@NonNull Call call, @NonNull java.io.IOException e) {
                         Looper.prepare();
                         Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
 
                     @Override
-                    public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                    public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
                         String str = Objects.requireNonNull(response.body()).string();
                         if(str.length()>0) {
                             JSONObject receiveObj = null;

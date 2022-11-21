@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.slider.Slider;
 
@@ -26,10 +27,13 @@ public class MarkerSettingDialog {
             if(value < 100){
                 expression = String.format("%.0f km", value);
             }else{
-                expression = String.format("100+ km");
+                expression = "100+ km";
             }
             return expression;
         });
+
+        ChipGroup chipGroup = view.findViewById(R.id.bottleType_chipGroup);
+
 
 
         AlertDialog builder = new MaterialAlertDialogBuilder(context)

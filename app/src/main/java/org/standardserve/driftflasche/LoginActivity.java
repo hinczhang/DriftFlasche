@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -19,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -33,10 +31,9 @@ import org.standardserve.driftflasche.fileio.TokenReadAndWrite;
 import org.standardserve.driftflasche.login.textValidation;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
-    private Button loginBtn;
-    private Button registerBtn;
     private EditText emailView;
     private EditText passwordView;
     private Context context;
@@ -71,8 +68,8 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String str = response.body().string();
-                if(str != null) {
+                String str = Objects.requireNonNull(response.body()).string();
+                {
                     JSONObject receiveObj = null;
                     try {
                         receiveObj = new JSONObject(str);
@@ -83,12 +80,13 @@ public class LoginActivity extends AppCompatActivity {
                         Looper.loop();
                     }
                     String status = null;
-                    String msg = null;
+                    //String msg = null;
                     String token = null;
                     String username = null;
                     try {
+                        assert receiveObj != null;
                         status = receiveObj.getString("status");
-                        msg = receiveObj.getString("msg");
+                        // msg = receiveObj.getString("msg");
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -99,7 +97,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     RootPath.setContext(context);
 
-                    if (Integer.valueOf(status) == 0) {
+                    assert status != null;
+                    if (Integer.parseInt(status) == 0) {
                         //TODO: login success
                         try {
                             token = receiveObj.getString("token");
@@ -117,10 +116,6 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(context, "Login token check failure, please enter your password", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
-                }else{
-                    Looper.prepare();
-                    Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
-                    Looper.loop();
                 }
             }
 
@@ -133,8 +128,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void init() {
-        loginBtn = findViewById(R.id.loginBtn);
-        registerBtn = findViewById(R.id.registerBtn);
+        Button loginBtn = findViewById(R.id.loginBtn);
+        Button registerBtn = findViewById(R.id.registerBtn);
         emailView = findViewById(R.id.editEmailAddress);
         passwordView = findViewById(R.id.editPassword);
         checkBox = findViewById(R.id.loginKeep);
@@ -147,9 +142,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                /*if (!textValidation.emailValidation(s.toString())) {
-                    emailView.setError("Invalid email");
-                }*/
+
             }
 
             @Override
@@ -168,9 +161,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                /*if (!textValidation.passwordValidation(s.toString())) {
-                    passwordView.setError("Invalid password");
-                }*/
+
             }
 
             @Override
@@ -204,50 +195,46 @@ public class LoginActivity extends AppCompatActivity {
                 call.enqueue(new Callback() {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        String str = response.body().string();
+                        String str = Objects.requireNonNull(response.body()).string();
                         Log.e("MarkerCreationDialog", "onResponse: " + str);
-                        if(str != null) {
-                            JSONObject receiveObj = null;
-                            try {
-                                receiveObj = new JSONObject(str);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Looper.prepare();
-                                Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                            String status = null;
-                            String msg = null;
-                            String token = null;
-                            String username = null;
-                            try {
-                                status = receiveObj.getString("status");
-                                msg = receiveObj.getString("msg");
-                                token = receiveObj.getString("token");
-                                username = receiveObj.getString("username");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Looper.prepare();
-                                Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-
-                            RootPath.setContext(context);
-
-                            if (Integer.valueOf(status) == 0) {
-                                //TODO: login success
-                                TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
-                                TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token);
-                                onSucessJump(username, token);
-                            }else{
-                                TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
-                                Looper.prepare();
-                                Toast.makeText(context, "Login token check failure, please enter your password", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }else{
+                        JSONObject receiveObj = null;
+                        try {
+                            receiveObj = new JSONObject(str);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                             Looper.prepare();
                             Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        String status = null;
+                        // String msg = null;
+                        String token = null;
+                        String username = null;
+                        try {
+                            assert receiveObj != null;
+                            status = receiveObj.getString("status");
+                            //msg = receiveObj.getString("msg");
+                            token = receiveObj.getString("token");
+                            username = receiveObj.getString("username");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Looper.prepare();
+                            Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+
+                        RootPath.setContext(context);
+
+                        assert status != null;
+                        if (Integer.parseInt(status) == 0) {
+                            //TODO: login success
+                            TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
+                            TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token);
+                            onSucessJump(username, token);
+                        }else{
+                            TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
+                            Looper.prepare();
+                            Toast.makeText(context, "Login token check failure, please enter your password", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }

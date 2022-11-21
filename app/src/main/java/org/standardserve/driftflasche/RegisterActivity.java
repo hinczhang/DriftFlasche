@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -27,13 +24,12 @@ import okhttp3.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.standardserve.driftflasche.fileio.RootPath;
-import org.standardserve.driftflasche.fileio.TokenReadAndWrite;
 import org.standardserve.driftflasche.login.textValidation;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
-    private Button registerBtn;
     private EditText truenameTextView;
     private EditText emailTextView;
     private EditText passwordTextView;
@@ -49,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void init(){
-        registerBtn = findViewById(R.id.registerButton);
+        Button registerBtn = findViewById(R.id.registerButton);
         truenameTextView = findViewById(R.id.userTruename);
         emailTextView = findViewById(R.id.registertEmailAddress);
         passwordTextView = findViewById(R.id.editTextPassword);
@@ -154,47 +150,43 @@ public class RegisterActivity extends AppCompatActivity {
                 call.enqueue(new Callback() {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        String str = response.body().string();
-                        if(str != null) {
-                            JSONObject receiveObj = null;
-                            try {
-                                receiveObj = new JSONObject(str);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Looper.prepare();
-                                Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                            String status = null;
-                            String msg = null;
-                            try {
-                                status = receiveObj.getString("status");
-                                msg = receiveObj.getString("msg");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Looper.prepare();
-                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-
-                            RootPath.setContext(context);
-
-                            if (Integer.valueOf(status) == 0) {
-                                Intent intent = new Intent(context, LoginActivity.class);
-                                startActivity(intent);
-                                Looper.prepare();
-                                Toast.makeText(context, "Register success, please login", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-
-                            }
-                            else{
-                                Looper.prepare();
-                                Toast.makeText(context, "Login token check failure, please enter your password", Toast.LENGTH_SHORT).show();
-                                Looper.loop();
-                            }
-                        }else{
+                        String str = Objects.requireNonNull(response.body()).string();
+                        JSONObject receiveObj = null;
+                        try {
+                            receiveObj = new JSONObject(str);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                             Looper.prepare();
                             Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+                        String status = null;
+                        // String msg = null;
+                        try {
+                            assert receiveObj != null;
+                            status = receiveObj.getString("status");
+                            // msg = receiveObj.getString("msg");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Looper.prepare();
+                            Toast.makeText(context, "Request Internet Error!", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        }
+
+                        RootPath.setContext(context);
+
+                        assert status != null;
+                        if (Integer.parseInt(status) == 0) {
+                            Intent intent = new Intent(context, LoginActivity.class);
+                            startActivity(intent);
+                            Looper.prepare();
+                            Toast.makeText(context, "Register success, please login", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+
+                        }
+                        else{
+                            Looper.prepare();
+                            Toast.makeText(context, "Login token check failure, please enter your password", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
                     }

@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.maps.GoogleMap
 
 object OverallPermission {
     const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -32,12 +31,12 @@ object OverallPermission {
                 context as Activity,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) || ActivityCompat.shouldShowRequestPermissionRationale(
-                context as Activity,
+                context,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
         ) {
             ActivityCompat.requestPermissions(
-                context as Activity,
+                context,
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION

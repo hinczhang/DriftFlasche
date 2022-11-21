@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
@@ -59,7 +57,7 @@ public class MarkerInfomationDialog {
         userTitle.setText(username);
 
         TextInputLayout contentInput = view.findViewById(R.id.content_info);
-        contentInput.getEditText().setText(markerContent.getString("content"));
+        Objects.requireNonNull(contentInput.getEditText()).setText(markerContent.getString("content"));
         contentInput.setEnabled(false);
 
         TextInputLayout commentInput = view.findViewById(R.id.comment);
@@ -72,7 +70,7 @@ public class MarkerInfomationDialog {
                     try {
                         RequestBody requestBody = new FormBody.Builder()
                                 .add("id", markerContent.getString("_id"))
-                                .add("content", commentInput.getEditText().getText().toString())
+                                .add("content", Objects.requireNonNull(commentInput.getEditText()).getText().toString())
                                 .add("username", own_username)
                                 .add("token", token)
                                 .add("mode", "comment")

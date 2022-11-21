@@ -19,8 +19,8 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.*;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -42,6 +42,7 @@ import org.standardserve.driftflasche.fileio.RootPath;
 import org.standardserve.driftflasche.fileio.TokenReadAndWrite;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -60,7 +61,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean permissionDenied = false;
     private FusedLocationProviderClient fusedLocationClient;
 
-    private Context context = this;
+    private final Context context = this;
     private String token;
     private String username;
 
@@ -130,7 +131,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    String res = response.body().string();
+                    String res = Objects.requireNonNull(response.body()).string();
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         int status = Integer.parseInt(jsonObject.getString("status"));
@@ -165,7 +166,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         Button bottleButton = findViewById(R.id.bottleButton);
-        bottleButton.setOnClickListener(v -> fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+        bottleButton.setOnClickListener(v -> fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
             @NonNull
             @Override
             public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
@@ -223,13 +224,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setOnMarkerClickListener(this);
         enableLocalization();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
             @NonNull
             @Override
-            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {;
+            public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
                 return null;
             }
-
             @Override
             public boolean isCancellationRequested() {
                 return false;
@@ -365,6 +365,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onMarkerClick(@NonNull Marker marker) {
 
         JSONObject obj = (JSONObject) marker.getTag();
+        assert obj != null;
         Toast.makeText(this, obj.toString(), Toast.LENGTH_SHORT).show();
         try {
             MarkerInfomationDialog.showMarkerInfomationDialog(this, obj, token, username);
