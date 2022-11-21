@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding;
 import org.standardserve.driftflasche.dialog.MarkerCreationDialog;
 import org.standardserve.driftflasche.dialog.MarkerInfomationDialog;
+import org.standardserve.driftflasche.dialog.MarkerSettingDialog;
 import org.standardserve.driftflasche.dialog.MyBottlesDialog;
 import org.standardserve.driftflasche.dialog.bottlesReload;
 import org.standardserve.driftflasche.fileio.RootPath;
@@ -89,6 +90,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView userName_sidebar = ((NavigationView) findViewById(R.id.nav_view)).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username);
         userName_sidebar.setText(username);
 
+        @SuppressLint("CutPasteId") MenuItem settings = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.setting_item);
+        settings.setOnMenuItemClickListener(item -> {
+            MarkerSettingDialog.createMarkerSettingDialog(context);
+            return true;
+        });
+
         @SuppressLint("CutPasteId") MenuItem logout = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.logout_item);
         logout.setOnMenuItemClickListener(item -> {
             RootPath.setContext(getApplicationContext());
@@ -98,7 +105,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             finish();
             return true;
         });
-        //TODO: add a function to manipulate the bottles
+
         @SuppressLint("CutPasteId") MenuItem myBottles = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.bottles_item);
         myBottles.setOnMenuItemClickListener(item -> {
             OkHttpClient client = new OkHttpClient();

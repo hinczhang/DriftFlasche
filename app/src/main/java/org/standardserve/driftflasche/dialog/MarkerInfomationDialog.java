@@ -140,21 +140,16 @@ public class MarkerInfomationDialog {
                                     Looper.prepare();
                                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                                     Looper.loop();
-
-
                                 }else{
                                     Looper.prepare();
                                     Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
                                     Looper.loop();
                                 }
-
                             }
                         });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
                 })
                 .setNeutralButton(R.string.decline, (dialog, which) -> {
 

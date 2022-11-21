@@ -57,4 +57,8 @@
     <string name="delete"> Delete </string>
     <string name="textview">TextView</string>
 
+    <!-- Bottle setting -->
+    <string name="setting"> Setting </string>
+    <string name="setting_distance"> Choose a range </string>
+    <string name="setting_type"> Choose bottle type </string>
 </resources>
