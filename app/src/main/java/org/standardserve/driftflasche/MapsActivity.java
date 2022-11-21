@@ -93,7 +93,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         @SuppressLint("CutPasteId") MenuItem settings = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.setting_item);
         settings.setOnMenuItemClickListener(item -> {
-            MarkerSettingDialog.createMarkerSettingDialog(context);
+            MarkerSettingDialog.createMarkerSettingDialog(context, globalLat, globalLng, token, username,mMap);
             return true;
         });
 
@@ -245,7 +245,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng furtherPoint = new LatLng(lat, lon);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15F));
-                bottlesReload.loadBottlesbyDistance(this, 20, lat, lon, token, username, mMap);
+                bottlesReload.loadBottlesbyDistance(this, 20, lat, lon, token, username, mMap, "");
                 Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show();
             }
         });
@@ -365,12 +365,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onMarkerClick(@NonNull Marker marker) {
 
         JSONObject obj = (JSONObject) marker.getTag();
-        assert obj != null;
-        Toast.makeText(this, obj.toString(), Toast.LENGTH_SHORT).show();
-        try {
-            MarkerInfomationDialog.showMarkerInfomationDialog(this, obj, token, username);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(obj!=null){
+            Toast.makeText(this, obj.toString(), Toast.LENGTH_SHORT).show();
+            try {
+                MarkerInfomationDialog.showMarkerInfomationDialog(this, obj, token, username);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }

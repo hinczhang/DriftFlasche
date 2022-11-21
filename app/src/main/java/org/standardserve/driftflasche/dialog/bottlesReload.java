@@ -30,16 +30,29 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class bottlesReload {
-    public static void loadBottlesbyDistance(Context context, double kilometersDistance, double latitude, double longitude, String token, String username, GoogleMap map){
+    public static void loadBottlesbyDistance(Context context, double kilometersDistance, double latitude, double longitude, String token, String username, GoogleMap map, String types){
         OkHttpClient mOKHttpClient = new OkHttpClient();
-        RequestBody formBody = new FormBody.Builder()
-                .add("lat", String.valueOf(latitude))
-                .add("lng", String.valueOf(longitude))
-                .add("distance", String.valueOf(kilometersDistance))
-                .add("token", token)
-                .add("username", username)
-                .add("mode", "search")
-                .build();
+        RequestBody formBody = null;
+        if(Objects.equals(types, "")){
+            formBody = new FormBody.Builder()
+                    .add("lat", String.valueOf(latitude))
+                    .add("lng", String.valueOf(longitude))
+                    .add("distance", String.valueOf(kilometersDistance))
+                    .add("token", token)
+                    .add("username", username)
+                    .add("mode", "search")
+                    .build();
+        }else{
+            formBody = new FormBody.Builder()
+                    .add("lat", String.valueOf(latitude))
+                    .add("lng", String.valueOf(longitude))
+                    .add("distance", String.valueOf(kilometersDistance))
+                    .add("token", token)
+                    .add("username", username)
+                    .add("mode", "search")
+                    .add("types", types)
+                    .build();
+        }
         String url = "http://138.68.65.184:5000/api/bottle";
         Request request = new Request.Builder()
                 .url(url)

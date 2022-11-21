@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
@@ -31,7 +32,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
+
+
+
 public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder> {
+    private static Marker marker = null;
     private final JSONArray bottles;
     private final String token;
 
@@ -81,6 +86,12 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
                 map.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
                 map.moveCamera(CameraUpdateFactory.zoomTo(18F));
                 // TODO: add a marker? but how to remove the marker? a global static array or variable to hold the marker?
+                if(marker!=null){
+                    marker.remove();
+                }
+
+                marker = map.addMarker(new com.google.android.gms.maps.model.MarkerOptions().position(furtherPoint).title("Your Bottle"));
+
             }));
 
 
@@ -139,7 +150,7 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, bottles.length());
                                 });
-                                bottlesReload.loadBottlesbyDistance(context, kilometersDistance, latitude, longitude, token, username,map);
+                                bottlesReload.loadBottlesbyDistance(context, kilometersDistance, latitude, longitude, token, username,map, "");
 
 
                             }

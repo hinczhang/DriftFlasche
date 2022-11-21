@@ -5,7 +5,6 @@ import android.util.Log;
 
 public class textValidation {
     public static boolean emailValidation(String email) {
-
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
     public static boolean passwordValidation(String password){
@@ -18,4 +17,5 @@ public class textValidation {
     public static boolean truenameValidation(String truename){
         return truename.length() >= 2 && truename.length() <= 20;
     }
+    //TODO: limit upload text information
 }

@@ -121,7 +121,7 @@ public class MarkerCreationDialog {
                                 }
                                 assert status != null;
                                 if(Integer.parseInt(status) == 0){
-                                    bottlesReload.loadBottlesbyDistance(context, 20, lat, lng, token, username,map);
+                                    bottlesReload.loadBottlesbyDistance(context, 20, lat, lng, token, username, map, "");
                                 }
                                 Looper.prepare();
                                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
