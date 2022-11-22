@@ -32,7 +32,7 @@ import okhttp3.Response;
 public class bottlesReload {
     public static void loadBottlesbyDistance(Context context, double kilometersDistance, double latitude, double longitude, String token, String username, GoogleMap map, String types){
         OkHttpClient mOKHttpClient = new OkHttpClient();
-        RequestBody formBody = null;
+        RequestBody formBody;
         if(Objects.equals(types, "")){
             formBody = new FormBody.Builder()
                     .add("lat", String.valueOf(latitude))

@@ -121,7 +121,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!textValidation.passwordValidation(s.toString())) {
+                if (!textValidation.repeatPasswordValidation(passwordTextView.getText().toString(), s.toString())) {
                     passwordConfirmTextView.setError("Invalid password");
                 }
             }
@@ -131,10 +131,10 @@ public class RegisterActivity extends AppCompatActivity {
             String email = emailTextView.getText().toString();
             String password = passwordTextView.getText().toString();
             String truename = truenameTextView.getText().toString();
-            if (textValidation.emailValidation(email) && textValidation.passwordValidation(password)) {
+            String repeatPassword = passwordConfirmTextView.getText().toString();
+            if (textValidation.emailValidation(email) && textValidation.passwordValidation(password) && textValidation.repeatPasswordValidation(password, repeatPassword) && textValidation.truenameValidation(truename)) {
                 RootPath.setContext(context);
                 String url = "http://138.68.65.184:5000/api/login";
-
                 OkHttpClient mOKHttpClient = new OkHttpClient();
                 RequestBody formBody = new FormBody.Builder()
                         .add("mode", "register")

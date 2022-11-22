@@ -24,6 +24,7 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.*;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnTokenCanceledListener;
@@ -42,6 +43,7 @@ import org.standardserve.driftflasche.fileio.RootPath;
 import org.standardserve.driftflasche.fileio.TokenReadAndWrite;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -82,6 +84,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
             .findFragmentById(R.id.map_fragment);
+        //SupportMapFragment mapFragment = SupportMapFragment.newInstance(new GoogleMapOptions().mapId("218164e650533236"));
+
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
     }
@@ -166,6 +170,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         Button bottleButton = findViewById(R.id.bottleButton);
+        if(isDayOrNight()){
+            bottleButton.setBackgroundColor(getResources().getColor(R.color.md_theme_dark_error));
+        }else{
+            bottleButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_surfaceTint));
+        }
         bottleButton.setOnClickListener(v -> fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
             @NonNull
             @Override
@@ -222,6 +231,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setOnMyLocationButtonClickListener(this);
         googleMap.setOnMyLocationClickListener(this);
         googleMap.setOnMarkerClickListener(this);
+        if(isDayOrNight()){
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.day_style_map));
+        }else{
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_style_map));
+        }
+
+
         enableLocalization();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
@@ -236,7 +252,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }).addOnSuccessListener(location -> {
             if (location == null){
-                Toast.makeText(this, "Cannot get location.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.location_permission_denied, Toast.LENGTH_SHORT).show();
             }else{
                 double lat = location.getLatitude();
                 double lon = location.getLongitude();
@@ -246,7 +262,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15F));
                 bottlesReload.loadBottlesbyDistance(this, 20, lat, lon, token, username, mMap, "");
-                Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.localization_success, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -262,7 +278,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 LatLng furtherPoint = new LatLng(lat, lon);
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
                                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15F));
-                                Toast.makeText(this, "location: $lat, $lon", Toast.LENGTH_SHORT).show();
                             }
                         });
     }
@@ -366,7 +381,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         JSONObject obj = (JSONObject) marker.getTag();
         if(obj!=null){
-            Toast.makeText(this, obj.toString(), Toast.LENGTH_SHORT).show();
             try {
                 MarkerInfomationDialog.showMarkerInfomationDialog(this, obj, token, username);
             } catch (JSONException e) {
@@ -395,6 +409,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onLocationChanged(@NonNull Location location) {
         globalLat = location.getLatitude();
         globalLng = location.getLongitude();
+    }
+
+    /**
+     * true daytime
+     * false nighttime
+     */
+    private boolean isDayOrNight() {
+        if (get24HourMode()) {
+            // 24 hour mode
+            Calendar c = Calendar.getInstance();
+            int currHour =  c.get(Calendar.HOUR_OF_DAY);
+            return currHour >= 6 && currHour < 18;
+        } else {
+            // 12 hour mode
+            Calendar c = Calendar.getInstance();
+            int currHour = c.get(Calendar.HOUR);
+            if (c.get(Calendar.AM_PM) == Calendar.AM) {
+                // morning
+                return currHour >= 6;
+            } else {
+                // afternoon
+                return currHour < 6;
+            }
+        }
+    }
+
+    // get the 12-hours mode or 24-hours mode
+    private boolean get24HourMode() {
+        return android.text.format.DateFormat.is24HourFormat(this);
     }
 
 }

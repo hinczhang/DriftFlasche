@@ -64,4 +64,7 @@
 
     <!-- Bottle information -->
     <string name="bottle_information"> The bottles you drop</string>
+
+    <!-- SnakeBar text -->
+    <string name="localization_success"> Localization Successful! </string>
 </resources>

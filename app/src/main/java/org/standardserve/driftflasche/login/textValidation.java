@@ -18,4 +18,11 @@ public class textValidation {
         return truename.length() >= 2 && truename.length() <= 20;
     }
     //TODO: limit upload text information
+    public static boolean limitCommentLength(String comment){
+        return comment.length() <= 20;
+    }
+
+    public static boolean limitBottleTextLength(String bottleText){
+        return bottleText.length() <= 100;
+    }
 }

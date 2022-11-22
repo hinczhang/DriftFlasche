@@ -2,7 +2,6 @@ package org.standardserve.driftflasche.dialog;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import com.google.android.material.slider.Slider;
 
 import org.standardserve.driftflasche.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MarkerSettingDialog {
@@ -70,7 +68,6 @@ public class MarkerSettingDialog {
                                 default:
                                     break;
                             }
-                            //type_string.append(id_types[ids.get(i)]);
                             if (i != ids.size() - 1) {
                                 type_string.append(";");
                             }
