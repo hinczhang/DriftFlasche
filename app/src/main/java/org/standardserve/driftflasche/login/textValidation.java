@@ -3,6 +3,8 @@ package org.standardserve.driftflasche.login;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.Objects;
+
 public class textValidation {
     public static boolean emailValidation(String email) {
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
@@ -12,7 +14,7 @@ public class textValidation {
         return password.length() >= 6;
     }
     public static boolean repeatPasswordValidation(String password, String repeatPassword){
-        return password == repeatPassword;
+        return Objects.equals(password, repeatPassword);
     }
     public static boolean truenameValidation(String truename){
         return truename.length() >= 2 && truename.length() <= 20;
