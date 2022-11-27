@@ -64,12 +64,10 @@ public class MarkerCreationDialog {
         MaterialButtonToggleGroup toogleButton = view.findViewById(R.id.bottleType);
         TextInputLayout dialogText = view.findViewById(R.id.comment);
         setToogleButton(toogleButton);
-        //setDialogText(dialogText);
         AlertDialog builder = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.bottle_creation_dialog_title)
                 .setPositiveButton(R.string.confirm, (dialog, which) -> {
                     OkHttpClient mOKHttpClient = new OkHttpClient();
-                    // TODO: add mediaType, see LoginActivity
                     bootleContent = Objects.requireNonNull(dialogText.getEditText()).getText().toString();
                     RequestBody formBody = new FormBody.Builder()
                             .add("username", username)
