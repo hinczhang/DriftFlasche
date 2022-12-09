@@ -22,6 +22,7 @@ object PermissionUtil {
         requestId: Int,
         finishActivity: Boolean
     ) {
+        // BEGIN_INCLUDE(location_permission_request)
         if (
             ActivityCompat.shouldShowRequestPermissionRationale(
                 activity,
@@ -59,6 +60,7 @@ object PermissionUtil {
         grantPermissions: Array<String>, grantResults: IntArray,
         permission: String
     ): Boolean {
+        // BEGIN_INCLUDE(permission_result)
         for (i in grantPermissions.indices) {
             if (permission == grantPermissions[i]) {
                 return grantResults[i] == PackageManager.PERMISSION_GRANTED
@@ -71,8 +73,10 @@ object PermissionUtil {
      * A dialog that displays a permission denied message.
      */
     class PermissionDeniedDialog : DialogFragment() {
+        // BEGIN_INCLUDE(permission_denied_dialog)
         private var finishActivity = false
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+            // Use the Builder class for convenient dialog construction.
             finishActivity =
                 arguments?.getBoolean(ARGUMENT_FINISH_ACTIVITY) ?: false
             return AlertDialog.Builder(activity)
@@ -83,6 +87,7 @@ object PermissionUtil {
 
         override fun onDismiss(dialog: DialogInterface) {
             super.onDismiss(dialog)
+            // If the permission was denied without checking the "Don't ask again" checkbox, finish
             if (finishActivity) {
                 Toast.makeText(
                     activity, R.string.permission_required_toast,
@@ -121,8 +126,10 @@ object PermissionUtil {
      * to handle permit or denial of this permission request.
      */
     class RationaleDialog : DialogFragment() {
+        // BEGIN_INCLUDE(permission_rationale_dialog)
         private var finishActivity = false
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+            // Use the Builder class for convenient dialog construction.
             val requestCode =
                 arguments?.getInt(ARGUMENT_PERMISSION_REQUEST_CODE) ?: 0
             finishActivity =
@@ -146,6 +153,7 @@ object PermissionUtil {
         }
 
         override fun onDismiss(dialog: DialogInterface) {
+            // If the permission was denied without checking the "Don't ask again" checkbox, finish
             super.onDismiss(dialog)
             if (finishActivity) {
                 Toast.makeText(
@@ -178,6 +186,7 @@ object PermissionUtil {
                 requestCode: Int,
                 finishActivity: Boolean
             ): RationaleDialog {
+                // Supply requestCode as an argument.
                 val arguments = Bundle().apply {
                     putInt(ARGUMENT_PERMISSION_REQUEST_CODE, requestCode)
                     putBoolean(ARGUMENT_FINISH_ACTIVITY, finishActivity)

@@ -30,11 +30,11 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText truenameTextView;
-    private EditText emailTextView;
-    private EditText passwordTextView;
-    private EditText passwordConfirmTextView;
-    private Context context;
+    private EditText truenameTextView; // true name input field
+    private EditText emailTextView; // email input field
+    private EditText passwordTextView;  // password input field
+    private EditText passwordConfirmTextView; // password confirmation input field
+    private Context context; // context of the activity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,22 +44,24 @@ public class RegisterActivity extends AppCompatActivity {
         init();
     }
 
+    /*
+    * initialize the components of the activity
+    * */
     private void init(){
-        Button registerBtn = findViewById(R.id.registerButton);
-        truenameTextView = findViewById(R.id.userTruename);
-        emailTextView = findViewById(R.id.registertEmailAddress);
-        passwordTextView = findViewById(R.id.editTextPassword);
-        passwordConfirmTextView = findViewById(R.id.editTextPassword_repeat);
+        Button registerBtn = findViewById(R.id.registerButton); // register button
+        truenameTextView = findViewById(R.id.userTruename); // true name input field
+        emailTextView = findViewById(R.id.registertEmailAddress); // email input field
+        passwordTextView = findViewById(R.id.editTextPassword); // password input field
+        passwordConfirmTextView = findViewById(R.id.editTextPassword_repeat); // password confirmation input field
 
+        // set the text change listener for the true name input field
         truenameTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -70,15 +72,14 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        // set the text change listener for the email input field
         emailTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -89,15 +90,14 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        // set the text change listener for the password input field
         passwordTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -108,15 +108,14 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        // set the text change listener for the password confirmation input field
         passwordConfirmTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -127,12 +126,14 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        // set the click listener for the register button
         registerBtn.setOnClickListener(v -> {
             String email = emailTextView.getText().toString();
             String password = passwordTextView.getText().toString();
             String truename = truenameTextView.getText().toString();
             String repeatPassword = passwordConfirmTextView.getText().toString();
             if (textValidation.emailValidation(email) && textValidation.passwordValidation(password) && textValidation.repeatPasswordValidation(password, repeatPassword) && textValidation.truenameValidation(truename)) {
+                // if all the input fields are valid, send the registration request to the server
                 RootPath.setContext(context);
                 String url = "http://138.68.65.184:5000/api/login";
                 OkHttpClient mOKHttpClient = new OkHttpClient();
@@ -150,6 +151,7 @@ public class RegisterActivity extends AppCompatActivity {
                 call.enqueue(new Callback() {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        // if the server returns a response, parse the response
                         String str = Objects.requireNonNull(response.body()).string();
                         JSONObject receiveObj = null;
                         try {
@@ -161,28 +163,24 @@ public class RegisterActivity extends AppCompatActivity {
                             Looper.loop();
                         }
                         String status = null;
-                        // String msg = null;
                         try {
                             assert receiveObj != null;
                             status = receiveObj.getString("status");
-                            // msg = receiveObj.getString("msg");
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Looper.prepare();
                             Toast.makeText(context, "Request Internet Error!", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
-
                         RootPath.setContext(context);
-
                         assert status != null;
+                        // if the registration is successful, save the user information to the local file
                         if (Integer.parseInt(status) == 0) {
                             Intent intent = new Intent(context, LoginActivity.class);
                             startActivity(intent);
                             Looper.prepare();
                             Toast.makeText(context, "Register success, please login", Toast.LENGTH_SHORT).show();
                             Looper.loop();
-
                         }
                         else{
                             Looper.prepare();
@@ -202,7 +200,5 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
-
 }

@@ -32,23 +32,21 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-
-
-
+// Adapter for the RecyclerView in the BottleDialog
 public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder> {
-    private static Marker marker = null;
-    private final JSONArray bottles;
-    private final String token;
+    private static Marker marker = null; // The marker that is currently selected
+    private final JSONArray bottles; // The JSONArray of bottles
+    private final String token; // The token of the user
 
-    private final Context context;
-    private final double kilometersDistance;
-    private final double latitude;
-    private final double longitude;
-    private final String username;
-    private final GoogleMap map;
+    private final Context context; // The context of the activity
+    private final double kilometersDistance; // The distance in kilometers
+    private final double latitude; // The latitude of the user
+    private final double longitude; // The longitude of the user
+    private final String username; // The username of the user
+    private final GoogleMap map; // The GoogleMap
 
+    // Constructor
     BottleAdapter(JSONArray out_bottles, String out_token, Context out_context, double out_kilometersDistance, double out_latitude, double out_longitude, String out_username, GoogleMap out_map){
-
         bottles = out_bottles;
         token = out_token;
         context = out_context;
@@ -59,6 +57,7 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
         map = out_map;
     }
 
+    // Called when the ViewHolder is created
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -66,10 +65,10 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
         return new BottleAdapter.ViewHolder(view);
     }
 
+    // Called when the ViewHolder is bound
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.seqNum.setText(String.valueOf(position+1));
-
         try {
             holder.abstractContent.setText(bottles.getJSONObject(position).getString("content"));
         } catch (JSONException e) {
@@ -77,9 +76,9 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
         }
 
         try {
-            String id = bottles.getJSONObject(position).getString("_id");
-            double target_lat = Double.parseDouble(bottles.getJSONObject(position).getJSONObject("position").getString("lat"));
-            double target_lng = Double.parseDouble(bottles.getJSONObject(position).getJSONObject("position").getString("lng"));
+            String id = bottles.getJSONObject(position).getString("_id"); // The id of the bottle
+            double target_lat = Double.parseDouble(bottles.getJSONObject(position).getJSONObject("position").getString("lat")); // The latitude of the bottle
+            double target_lng = Double.parseDouble(bottles.getJSONObject(position).getJSONObject("position").getString("lng")); // The longitude of the bottle
 
             holder.locButton.setOnClickListener(v-> new Handler(Looper.getMainLooper()).post(() -> {
                 LatLng furtherPoint = new LatLng(target_lat, target_lng);
@@ -89,12 +88,11 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
                 if(marker!=null){
                     marker.remove();
                 }
-
-                marker = map.addMarker(new com.google.android.gms.maps.model.MarkerOptions().position(furtherPoint).title("Your Bottle"));
+                marker = map.addMarker(new com.google.android.gms.maps.model.MarkerOptions().position(furtherPoint).title("Your Bottle")); // ADD A MARKER
 
             }));
 
-
+            // The button to delete the bottle
             holder.deleteButton.setOnClickListener(v -> {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody formBody = new FormBody.Builder()
@@ -119,6 +117,7 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
+                        // Delete the bottle from the map
                         String str = Objects.requireNonNull(response.body()).string();
                         if(str.length()>0) {
                             JSONObject receiveObj = null;
@@ -143,16 +142,14 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
                                 Looper.loop();
                             }
                             assert status != null;
+                            // If the deletion is successful
                             if(Integer.parseInt(status) == 0){
                                 bottles.remove(position);
-
                                 new Handler(Looper.getMainLooper()).post(() -> {
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, bottles.length());
                                 });
                                 bottlesReload.loadBottlesbyDistance(context, kilometersDistance, latitude, longitude, token, username,map, "");
-
-
                             }
                             Looper.prepare();
                             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
@@ -172,16 +169,18 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
 
     }
 
+    // Return the number of bottles
     @Override
     public int getItemCount() {
         return bottles.length();
     }
 
+    // The ViewHolder class
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView seqNum;
-        private final TextView abstractContent;
-        private final MaterialButton deleteButton;
-        private final MaterialButton locButton;
+        private final TextView seqNum; // The sequence number of the bottle
+        private final TextView abstractContent; // The abstract content of the bottle
+        private final MaterialButton deleteButton; // The button to delete the bottle
+        private final MaterialButton locButton; // The button to locate the bottle
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             seqNum = itemView.findViewById(R.id.seqNum);

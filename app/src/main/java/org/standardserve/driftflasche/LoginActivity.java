@@ -33,11 +33,15 @@ import org.standardserve.driftflasche.login.textValidation;
 import java.io.IOException;
 import java.util.Objects;
 
+/*
+* This class is the login activity. It is the first activity that is started when the app is opened.
+* */
+
 public class LoginActivity extends AppCompatActivity {
-    private EditText emailView;
-    private EditText passwordView;
-    private Context context;
-    private CheckBox checkBox;
+    private EditText emailView; // The email input field
+    private EditText passwordView; // The password input field
+    private Context context; // The context of the activity
+    private CheckBox checkBox; // The checkbox for the remember me function
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,18 +52,18 @@ public class LoginActivity extends AppCompatActivity {
         init();
     }
 
+    /*
+    * This method checks if the user has a token stored on the device. If so, it will try to login with the token.
+    * */
     private void checkTokenLogin(){
         RootPath.setContext(context);
         String token = TokenReadAndWrite.readToken(RootPath.getCacheDir());
         String url = "http://138.68.65.184:5000/api/login";
-
         OkHttpClient mOKHttpClient = new OkHttpClient();
         RequestBody formBody = new FormBody.Builder()
                 .add("mode", "token")
                 .add("token", token)
                 .build();
-
-
         Request request = new Request.Builder()
                 .url(url)
                 .post(formBody)
@@ -68,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                // If the response is successful, the user is logged in and the main activity is started.
                 String str = Objects.requireNonNull(response.body()).string();
                 {
                     JSONObject receiveObj = null;
@@ -80,37 +85,32 @@ public class LoginActivity extends AppCompatActivity {
                         Looper.loop();
                     }
                     String status = null;
-                    //String msg = null;
                     String token = null;
                     String username = null;
                     try {
                         assert receiveObj != null;
                         status = receiveObj.getString("status");
-                        // msg = receiveObj.getString("msg");
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Looper.prepare();
                         Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
                         Looper.loop();
                     }
-
                     RootPath.setContext(context);
-
                     assert status != null;
+                    // If the status is successful, the token will be stored in the cache directory.
                     if (Integer.parseInt(status) == 0) {
-                        //TODO: login success
                         try {
                             token = receiveObj.getString("token");
                             username = receiveObj.getString("username");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                         TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
                         TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token);
-                        onSucessJump(username, token);
+                        onSuccessJump(username, token);
                     }else{
+                        // If the status is not successful, the user will be notified.
                         TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
                         Looper.prepare();
                         Toast.makeText(context, "Login token check failure, please enter your password", Toast.LENGTH_SHORT).show();
@@ -118,31 +118,35 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                Looper.prepare();
+                Toast.makeText(context, "Login failed due to network error", Toast.LENGTH_SHORT).show();
+                Looper.loop();
             }
         });
-
     }
 
+    /*
+    * Initialize the login activity's components and define the behavior of the components.
+    * */
+
     private void init() {
+        // Initialize the components
         Button loginBtn = findViewById(R.id.loginBtn);
         Button registerBtn = findViewById(R.id.registerBtn);
         emailView = findViewById(R.id.editEmailAddress);
         passwordView = findViewById(R.id.editPassword);
         checkBox = findViewById(R.id.loginKeep);
 
+        // Email input field behavior
         emailView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -153,15 +157,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Password input field behavior
         passwordView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -172,10 +175,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Login button behavior
         loginBtn.setOnClickListener(v -> {
             String email = emailView.getText().toString();
             String password = passwordView.getText().toString();
             boolean keep = checkBox.isChecked();
+            // If the email and password are valid, the login request will be sent.
             if (textValidation.emailValidation(email) && textValidation.passwordValidation(password)) {
                 RootPath.setContext(context);
                 String url = "http://138.68.65.184:5000/api/login";
@@ -195,8 +200,8 @@ public class LoginActivity extends AppCompatActivity {
                 call.enqueue(new Callback() {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        // If the response is successful, the user is logged in and the main activity is started.
                         String str = Objects.requireNonNull(response.body()).string();
-                        Log.e("MarkerCreationDialog", "onResponse: " + str);
                         JSONObject receiveObj = null;
                         try {
                             receiveObj = new JSONObject(str);
@@ -222,16 +227,15 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
                             Looper.loop();
                         }
-
                         RootPath.setContext(context);
-
                         assert status != null;
+                        // If the status is successful, the token will be stored in the cache directory.
                         if (Integer.parseInt(status) == 0) {
-                            //TODO: login success
                             TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
                             TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token);
-                            onSucessJump(username, token);
+                            onSuccessJump(username, token);
                         }else{
+                            // If the status is not successful, the user will be notified.
                             TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
                             Looper.prepare();
                             Toast.makeText(context, "Login token check failure, please enter your password", Toast.LENGTH_SHORT).show();
@@ -241,7 +245,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
                     }
                 });
             } else {
@@ -252,13 +255,18 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         registerBtn.setOnClickListener(v -> {
+            // If the user clicks the register button, the register activity will be started.
             Intent intent = new Intent(context, RegisterActivity.class);
             startActivity(intent);
         });
 
     }
 
-    private void onSucessJump(String username, String token){
+    /*
+    * Start the main activity and pass the username and token to the main activity.
+    * */
+
+    private void onSuccessJump(String username, String token){
         Intent mapIntent = new Intent(LoginActivity.this, MapsActivity.class);
         mapIntent.putExtra("username", username);
         mapIntent.putExtra("token", token);

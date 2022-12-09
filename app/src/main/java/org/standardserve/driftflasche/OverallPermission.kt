@@ -16,10 +16,12 @@ object OverallPermission {
    * */
 
     fun enableExternalStoragePermission(context: Context){
+        // Check if the READ_EXTERNAL_STORAGE permission is already available.
         val writePermission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (writePermission != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), WRITE_EXTERNAL_STORAGE_REQUEST_CODE)
         }
+        // Check if the WRITE_EXTERNAL_STORAGE permission is already available.
         val readPermission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
         if (readPermission != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_REQUEST_CODE)
@@ -27,6 +29,7 @@ object OverallPermission {
     }
 
     fun enableLocationPermission(context: Context){
+        // Check if the FINE_LOCATION and COARSE_LOCATION permissions are already available.
         if(ActivityCompat.shouldShowRequestPermissionRationale(
                 context as Activity,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -35,6 +38,7 @@ object OverallPermission {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
         ) {
+            // Display a dialog with rationale.
             ActivityCompat.requestPermissions(
                 context,
                 arrayOf(

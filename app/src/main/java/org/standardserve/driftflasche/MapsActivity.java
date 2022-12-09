@@ -54,54 +54,59 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/*
+* MapsActivity: The main activity of the app. It is the map and the main menu.
+* */
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
     LocationSource.OnLocationChangedListener, GoogleMap.OnMyLocationClickListener,
     GoogleMap.OnMyLocationButtonClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private GoogleMap mMap;
-    private boolean permissionDenied = false;
-    private FusedLocationProviderClient fusedLocationClient;
+    private GoogleMap mMap; // The map
+    private boolean permissionDenied = false; // If the user denied the permission to use the location
+    private FusedLocationProviderClient fusedLocationClient; // The location client
 
-    private final Context context = this;
-    private String token;
-    private String username;
+    private final Context context = this; // The context of the activity
+    private String token;  // The token of the user
+    private String username; // The username of the user
 
-    private float firstBackTime = 0L;
+    private float firstBackTime = 0L; // The time of the first back button press
 
-    private Double globalLat = 0.0;
-    private Double globalLng = 0.0;
+    private Double globalLat = 0.0; // The latitude of the user
+    private Double globalLng = 0.0; // The longitude of the user
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         org.standardserve.driftflasche.databinding.ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        Intent loginIntent = getIntent();
-        token = loginIntent.getStringExtra("token");
-        username = loginIntent.getStringExtra("username");
-        permissionInit();
-        componentInit();
+        Intent loginIntent = getIntent(); // The intent of the login activity
+        token = loginIntent.getStringExtra("token"); // Get the token from the login activity
+        username = loginIntent.getStringExtra("username"); // Get the username from the login activity
+        permissionInit(); // Initialize the permission
+        componentInit(); // Initialize the components
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
             .findFragmentById(R.id.map_fragment);
-        //SupportMapFragment mapFragment = SupportMapFragment.newInstance(new GoogleMapOptions().mapId("218164e650533236"));
-
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
     }
 
+    // Initialize the components
     @SuppressLint("MissingPermission")
     private void componentInit(){
-        TextView userName_sidebar = ((NavigationView) findViewById(R.id.nav_view)).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username);
-        userName_sidebar.setText(username);
 
-        @SuppressLint("CutPasteId") MenuItem settings = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.setting_item);
+        TextView userName_sidebar = ((NavigationView) findViewById(R.id.nav_view)).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username); // The username textview in the sidebar
+        userName_sidebar.setText(username); // Set the username textview in the sidebar
+
+        @SuppressLint("CutPasteId") MenuItem settings = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.setting_item); // The setting item in the sidebar
+        // Set the on click listener of the setting item
         settings.setOnMenuItemClickListener(item -> {
             MarkerSettingDialog.createMarkerSettingDialog(context, globalLat, globalLng, token, username,mMap);
             return true;
         });
 
-        @SuppressLint("CutPasteId") MenuItem logout = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.logout_item);
+        @SuppressLint("CutPasteId") MenuItem logout = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.logout_item); // The logout item in the sidebar
+        // Set the on click listener of the logout item
         logout.setOnMenuItemClickListener(item -> {
             RootPath.setContext(getApplicationContext());
             TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
@@ -111,8 +116,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         });
 
-        @SuppressLint("CutPasteId") MenuItem myBottles = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.bottles_item);
+        @SuppressLint("CutPasteId") MenuItem myBottles = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.bottles_item); // The my bottles item in the sidebar
+        // Set the on click listener of the my bottles item
         myBottles.setOnMenuItemClickListener(item -> {
+            // Obtain the bottles of the user from the server
             OkHttpClient client = new OkHttpClient();
             RequestBody formBody = new FormBody.Builder()
                     .add("token", token)
@@ -139,7 +146,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     try {
                         JSONObject jsonObject = new JSONObject(res);
                         int status = Integer.parseInt(jsonObject.getString("status"));
-
+                        // If the status is 0, the request is successful
                         if (status == 0) {
                             new Handler(Looper.getMainLooper()).post(() ->{
                                 JSONArray bottles = null;
@@ -148,7 +155,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
                                 try {
                                     MyBottlesDialog.showMyBottlesDialog(context, token, bottles, 20, globalLat, globalLng, username, mMap);
                                 } catch (JSONException e) {
@@ -169,19 +175,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return true;
         });
 
-        Button bottleButton = findViewById(R.id.bottleButton);
+        Button bottleButton = findViewById(R.id.bottleButton); // The bottle button
         if(isDayOrNight()){
-            bottleButton.setBackgroundColor(getResources().getColor(R.color.md_theme_dark_error));
+            bottleButton.setBackgroundColor(getResources().getColor(R.color.md_theme_dark_error)); // Set the background color of the bottle button for day
         }else{
-            bottleButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_surfaceTint));
+            bottleButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_surfaceTint)); // Set the background color of the bottle button for night
         }
+        // Set the on click listener of the bottle button
         bottleButton.setOnClickListener(v -> fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
             @NonNull
             @Override
             public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
                 return null;
             }
-
             @Override
             public boolean isCancellationRequested() {
                 return false;
@@ -189,13 +195,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }).addOnSuccessListener(location -> {
             globalLat = location.getLatitude();
             globalLng = location.getLongitude();
-            MarkerCreationDialog.create(this, username, location.getLatitude(), location.getLongitude(), token, mMap);
+            MarkerCreationDialog.create(this, username, location.getLatitude(), location.getLongitude(), token, mMap); // Create a marker creation dialog
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(17F));
         }));
     }
 
+    // Initialize the permission
     private void permissionInit(){
         OverallPermission.INSTANCE.enableExternalStoragePermission(this);
     }
@@ -218,7 +225,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -227,19 +233,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        googleMap.setOnMyLocationButtonClickListener(this);
-        googleMap.setOnMyLocationClickListener(this);
-        googleMap.setOnMarkerClickListener(this);
+        googleMap.setOnMyLocationButtonClickListener(this); //  Set the on click listener of the my location button
+        googleMap.setOnMyLocationClickListener(this); // Set the on click listener of the my location
+        googleMap.setOnMarkerClickListener(this); // Set the on click listener of the marker
         if(isDayOrNight()){
-            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.day_style_map));
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.day_style_map)); // Set the map style for day
         }else{
-            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_style_map));
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_style_map)); // Set the map style for night
         }
-
-
-        enableLocalization();
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        enableLocalization(); // Enable the localization
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this); // Get the fused location provider client
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, new CancellationToken() {
             @NonNull
             @Override
@@ -261,12 +264,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng furtherPoint = new LatLng(lat, lon);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(furtherPoint));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15F));
-                bottlesReload.loadBottlesbyDistance(this, 20, lat, lon, token, username, mMap, "");
+                bottlesReload.loadBottlesbyDistance(this, 20, lat, lon, token, username, mMap, ""); // Load the bottles by certain conditions
                 Toast.makeText(this, R.string.localization_success, Toast.LENGTH_SHORT).show();
             }
         });
 
-
+        // Set the on click listener of the search button
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(
                         location -> {
@@ -325,10 +328,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         );
     }
 
+    // The result of the permission request
     @Override
     public void onRequestPermissionsResult(
             int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults
     ){
+        // 1. Check if the permission request code is the same as the one we requested
         if (requestCode != OverallPermission.LOCATION_PERMISSION_REQUEST_CODE) {
             super.onRequestPermissionsResult(
                 requestCode,
@@ -338,6 +343,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
 
+        // 2. Check if the permission is granted
         if (PermissionUtil.isPermissionGranted(
                 permissions,
                 grantResults,
@@ -357,6 +363,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    // The result of the permission rationale dialog
     @Override
     public void onResumeFragments() {
         super.onResumeFragments();
@@ -376,9 +383,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         );
     }
 
+    // The style of marker after clicking
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-
         JSONObject obj = (JSONObject) marker.getTag();
         if(obj!=null){
             try {
