@@ -29,6 +29,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+// Load bottles from server with certain parameters
 public class bottlesReload {
     public static void loadBottlesbyDistance(Context context, double kilometersDistance, double latitude, double longitude, String token, String username, GoogleMap map, String types){
         OkHttpClient mOKHttpClient = new OkHttpClient();
@@ -62,6 +63,7 @@ public class bottlesReload {
         call.enqueue(new Callback(){
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                // Get bottles from server
                 String str = Objects.requireNonNull(response.body()).string();
                 JSONObject receiveObj = null;
                 try {
@@ -86,8 +88,10 @@ public class bottlesReload {
                 }
 
                 JSONArray finalLoading_data = loading_data;
+                // render bottles on map within the main thread
                 new Handler(Looper.getMainLooper()).post(() -> {
                     map.clear();
+                    // add bottles to map with markers
                     for(int i = 0; i < Objects.requireNonNull(finalLoading_data).length(); ++i) {
                         try {
                             JSONObject bottle = finalLoading_data.getJSONObject(i);
@@ -98,7 +102,6 @@ public class bottlesReload {
                             String bottleLng = bottle.getJSONObject("position").getString("lng");
                             int bottleIcon;
                             switch(bottleType){
-                                //case "INFO": bottleIcon = R.drawable.info_driftbottle; break;
                                 case "MOOD": bottleIcon = R.drawable.mood_driftbottle; break;
                                 case "WARN": bottleIcon = R.drawable.warn_driftbottle; break;
                                 default: bottleIcon = R.drawable.info_driftbottle; break;

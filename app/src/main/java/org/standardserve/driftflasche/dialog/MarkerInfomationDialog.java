@@ -34,35 +34,37 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+// Show the information of a marker
 public class MarkerInfomationDialog {
     private MarkerInfomationDialog(){}
+
+    // Show the information of a marker and allow the user to add a message
     public static void showMarkerInfomationDialog(Context context, JSONObject markerContent, String token, String own_username) throws JSONException {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.info_bottle, null);
+        LayoutInflater inflater = LayoutInflater.from(context); // Get the layout inflater
+        View view = inflater.inflate(R.layout.info_bottle, null); // Inflate the layout
 
+        RecyclerView commentTable = view.findViewById(R.id.comments); // Get the comment table
+        commentTable.setLayoutManager(new LinearLayoutManager(context)); // Set the layout manager
+        commentTable.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL)); // Add a divider between the comments
+        JSONArray comments = markerContent.getJSONArray("affiliate"); // Get the comments
+        CommentAdapter adapter = new CommentAdapter(comments); // Create a new adapter
+        commentTable.setAdapter(adapter); // Set the adapter
 
-        RecyclerView commentTable = view.findViewById(R.id.comments);
-        commentTable.setLayoutManager(new LinearLayoutManager(context));
-        commentTable.addItemDecoration(new DividerItemDecoration(context, LinearLayoutManager.VERTICAL));
-        JSONArray comments = markerContent.getJSONArray("affiliate");
-        CommentAdapter adapter = new CommentAdapter(comments);
-        commentTable.setAdapter(adapter);
+        ImageView icon = view.findViewById(R.id.typeIcon); // Get the icon
+        String type = markerContent.getString("type"); // Get the type
+        icon.setImageResource(type.equals("INFO") ? R.drawable.info_icon : type.equals("MOOD") ? R.drawable.mood_icon : R.drawable.warn_icon); // Set the icon
 
-        ImageView icon = view.findViewById(R.id.typeIcon);
-        String type = markerContent.getString("type");
-        icon.setImageResource(type.equals("INFO") ? R.drawable.info_icon : type.equals("MOOD") ? R.drawable.mood_icon : R.drawable.warn_icon);
+        TextView userTitle = view.findViewById(R.id.user_title); // Get the user title
+        String username = markerContent.getString("username"); // Get the username
+        userTitle.setText(username); // Set the user title
 
-        TextView userTitle = view.findViewById(R.id.user_title);
-        String username = markerContent.getString("username");
-        userTitle.setText(username);
+        TextInputLayout contentInput = view.findViewById(R.id.content_info); // Get the content input
+        Objects.requireNonNull(contentInput.getEditText()).setText(markerContent.getString("content")); // Set the content
+        contentInput.setEnabled(false); // Disable the input
 
-        TextInputLayout contentInput = view.findViewById(R.id.content_info);
-        Objects.requireNonNull(contentInput.getEditText()).setText(markerContent.getString("content"));
-        contentInput.setEnabled(false);
+        TextInputLayout commentInput = view.findViewById(R.id.comment); // Get the comment input
 
-        TextInputLayout commentInput = view.findViewById(R.id.comment);
-
-
+        // add a comment
         AlertDialog builder = new MaterialAlertDialogBuilder(context)
                 .setView(view)
                 .setPositiveButton(R.string.submission, (dialog, which) ->{
@@ -91,6 +93,7 @@ public class MarkerInfomationDialog {
 
                             @Override
                             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                                // Get the response for bottle content
                                 String str = Objects.requireNonNull(response.body()).string();
                                 if(str.length()>0) {
                                     JSONObject receiveObj = null;
@@ -116,6 +119,7 @@ public class MarkerInfomationDialog {
                                     }
                                     assert status != null;
                                     if(Integer.parseInt(status) == 0){
+                                        // Add comment to the comment table if the request is successful
                                         JSONObject tmp = new JSONObject();
                                         try {
                                             tmp.put("username", own_username);

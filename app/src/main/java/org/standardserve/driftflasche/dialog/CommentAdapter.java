@@ -13,13 +13,13 @@ import org.json.JSONException;
 
 import org.standardserve.driftflasche.R;
 
+// Adapter for the RecyclerView in the CommentDialog
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
-    private final JSONArray comments;
+    private final JSONArray comments; // The comments to display
 
     CommentAdapter(JSONArray out_comments){
         comments = out_comments;
     }
-
 
     @NonNull
     @Override
@@ -28,13 +28,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         return new ViewHolder(view);
     }
 
+    // Bind the data to the view
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
-            String username = comments.getJSONObject(position).getString("username");
-            String content = comments.getJSONObject(position).getString("content");
-            holder.content.setText(username + ": " + content);
+            String username = comments.getJSONObject(position).getString("username"); // Get the username
+            String content = comments.getJSONObject(position).getString("content"); // Get the content
+            holder.content.setText(username + ": " + content); // Set the text
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -47,10 +48,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView content;
-
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            content = itemView.findViewById(R.id.commet_content);
+            content = itemView.findViewById(R.id.commet_content); // Get the TextView
         }
     }
 }

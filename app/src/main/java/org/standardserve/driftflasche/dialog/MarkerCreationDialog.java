@@ -31,19 +31,22 @@ import org.standardserve.driftflasche.R;
 import java.io.IOException;
 import java.util.Objects;
 
-
+// Bottle types
 enum BOTTLE_TYPE{
     INFO, MOOD, WARN
 }
 
+// Dialog for creating a new marker
 public class MarkerCreationDialog {
     private MarkerCreationDialog(){}
 
     private static BOTTLE_TYPE bootleType = BOTTLE_TYPE.INFO; // 1: info, 2: mood, 3: warn
-    private static String bootleContent = "";
+    private static String bootleContent = ""; // Content of the bottle
 
+    // toogle selection initialization
     @SuppressLint("NonConstantResourceId")
     private static void setToogleButton(MaterialButtonToggleGroup toogleButton){
+        // Set the toogle button
         toogleButton.addOnButtonCheckedListener(
                 (group, checkedId, isChecked) -> {
                     if(isChecked){
@@ -58,15 +61,17 @@ public class MarkerCreationDialog {
         );
     }
 
+    // Create the dialog
     public static void create(Context context, String username, Double lat, Double lng, String token, GoogleMap map) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.set_bottle, null);
-        MaterialButtonToggleGroup toogleButton = view.findViewById(R.id.bottleType);
-        TextInputLayout dialogText = view.findViewById(R.id.comment);
-        setToogleButton(toogleButton);
+        LayoutInflater inflater = LayoutInflater.from(context); // Get the layout inflater
+        View view = inflater.inflate(R.layout.set_bottle, null); // Inflate the layout
+        MaterialButtonToggleGroup toogleButton = view.findViewById(R.id.bottleType); // Get the toogle button
+        TextInputLayout dialogText = view.findViewById(R.id.comment); // Get the text input
+        setToogleButton(toogleButton); // Set the toogle button
         AlertDialog builder = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.bottle_creation_dialog_title)
                 .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                    // Get the content of the text input
                     OkHttpClient mOKHttpClient = new OkHttpClient();
                     bootleContent = Objects.requireNonNull(dialogText.getEditText()).getText().toString();
                     RequestBody formBody = new FormBody.Builder()
@@ -94,6 +99,7 @@ public class MarkerCreationDialog {
 
                         @Override
                         public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            // Get the response of bottle creation
                             String str = Objects.requireNonNull(response.body()).string();
                             if(str.length()>0) {
                                 JSONObject receiveObj = null;
@@ -119,19 +125,17 @@ public class MarkerCreationDialog {
                                 }
                                 assert status != null;
                                 if(Integer.parseInt(status) == 0){
+                                    // refresh the map if the bottle is created successfully
                                     bottlesReload.loadBottlesbyDistance(context, 20, lat, lng, token, username, map, "");
                                 }
                                 Looper.prepare();
                                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                                 Looper.loop();
-
-
                             }else{
                                 Looper.prepare();
                                 Toast.makeText(context, "Login failed due to request error", Toast.LENGTH_SHORT).show();
                                 Looper.loop();
                             }
-
                         }
                     });
 

@@ -18,17 +18,21 @@ import org.standardserve.driftflasche.R;
 
 import java.util.List;
 
+
+// Marker selection settings dialog
 public class MarkerSettingDialog {
     private MarkerSettingDialog() {}
+
+    // Dialog builder
     @SuppressLint("DefaultLocale")
     public static void createMarkerSettingDialog(Context context, double lat, double lng, String token, String username, GoogleMap map){
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.setting_bottle, null);
+        LayoutInflater inflater = LayoutInflater.from(context); // Get layout inflater
+        View view = inflater.inflate(R.layout.setting_bottle, null); // Inflate layout
 
+        String[] id_types = {"INFO", "MOOD", "WARN"}; // Bottle types
 
-        String[] id_types = {"INFO", "MOOD", "WARN"};
-
-        Slider rangeSlider = view.findViewById(R.id.range_slider);
+        Slider rangeSlider = view.findViewById(R.id.range_slider); // Get range slider
+        //  Set range slider
         rangeSlider.setLabelFormatter(value -> {
             String expression;
             if(value < 100){
@@ -39,20 +43,17 @@ public class MarkerSettingDialog {
             return expression;
         });
 
-        ChipGroup chipGroup = view.findViewById(R.id.bottleType_chipGroup);
+        ChipGroup chipGroup = view.findViewById(R.id.bottleType_chipGroup); // Get chip group
 
 
         @SuppressLint("NonConstantResourceId") AlertDialog builder = new MaterialAlertDialogBuilder(context)
                 .setView(view)
                 .setPositiveButton(R.string.submission, (dialog, which) -> {
-
-                    List<Integer> ids = chipGroup.getCheckedChipIds();
-                    Log.d("ids", ids.toString());
+                    List<Integer> ids = chipGroup.getCheckedChipIds(); // Get checked chip ids
                     if(ids.size() == 0){
-                        //Looper.prepare();
                         Toast.makeText(context, "Require at least one type!", Toast.LENGTH_SHORT).show();
-                        //Looper.loop();
                     }else {
+                        // Get selected bottle types
                         StringBuilder type_string = new StringBuilder();
                         for (int i = 0; i < ids.size(); i++) {
                             switch (ids.get(i)) {
@@ -72,14 +73,13 @@ public class MarkerSettingDialog {
                                 type_string.append(";");
                             }
                         }
-
+                        // load bottles with selected types and range
                         bottlesReload.loadBottlesbyDistance(context, rangeSlider.getValue() ,lat, lng, token, username, map, type_string.toString());
                     }
 
 
                 })
                 .setNeutralButton(R.string.decline, (dialog, which) -> {
-
                 })
                 .create();
         builder.show();
