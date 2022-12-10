@@ -87,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                     String status = null;
                     String token = null;
                     String username = null;
+                    String truename = null;
                     try {
                         assert receiveObj != null;
                         status = receiveObj.getString("status");
@@ -103,12 +104,13 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             token = receiveObj.getString("token");
                             username = receiveObj.getString("username");
+                            truename = receiveObj.getString("truename");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
                         TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token);
-                        onSuccessJump(username, token);
+                        onSuccessJump(username, token, truename);
                     }else{
                         // If the status is not successful, the user will be notified.
                         TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
@@ -212,13 +214,13 @@ public class LoginActivity extends AppCompatActivity {
                             Looper.loop();
                         }
                         String status = null;
-                        // String msg = null;
                         String token = null;
                         String username = null;
+                        String truename = null;
                         try {
                             assert receiveObj != null;
                             status = receiveObj.getString("status");
-                            //msg = receiveObj.getString("msg");
+                            truename = receiveObj.getString("truename");
                             token = receiveObj.getString("token");
                             username = receiveObj.getString("username");
                         } catch (JSONException e) {
@@ -233,7 +235,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (Integer.parseInt(status) == 0) {
                             TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
                             TokenReadAndWrite.writeToken(RootPath.getCacheDir(), token);
-                            onSuccessJump(username, token);
+                            onSuccessJump(username, token, truename);
                         }else{
                             // If the status is not successful, the user will be notified.
                             TokenReadAndWrite.destroyToken(RootPath.getCacheDir());
@@ -266,10 +268,11 @@ public class LoginActivity extends AppCompatActivity {
     * Start the main activity and pass the username and token to the main activity.
     * */
 
-    private void onSuccessJump(String username, String token){
+    private void onSuccessJump(String username, String token, String truename){
         Intent mapIntent = new Intent(LoginActivity.this, MapsActivity.class);
         mapIntent.putExtra("username", username);
         mapIntent.putExtra("token", token);
+        mapIntent.putExtra("truename", truename);
         startActivity(mapIntent);
     }
 

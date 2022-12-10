@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.standardserve.driftflasche.databinding.ActivityMapsBinding;
+import org.standardserve.driftflasche.dialog.AboutDialog;
 import org.standardserve.driftflasche.dialog.MarkerCreationDialog;
 import org.standardserve.driftflasche.dialog.MarkerInfomationDialog;
 import org.standardserve.driftflasche.dialog.MarkerSettingDialog;
@@ -69,6 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final Context context = this; // The context of the activity
     private String token;  // The token of the user
     private String username; // The username of the user
+    private String truename; // The truename of the user
 
     private float firstBackTime = 0L; // The time of the first back button press
 
@@ -82,6 +84,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Intent loginIntent = getIntent(); // The intent of the login activity
         token = loginIntent.getStringExtra("token"); // Get the token from the login activity
         username = loginIntent.getStringExtra("username"); // Get the username from the login activity
+        truename = loginIntent.getStringExtra("truename"); // Get the truename from the login activity
         permissionInit(); // Initialize the permission
         componentInit(); // Initialize the components
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -96,12 +99,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void componentInit(){
 
         TextView userName_sidebar = ((NavigationView) findViewById(R.id.nav_view)).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username); // The username textview in the sidebar
-        userName_sidebar.setText(username); // Set the username textview in the sidebar
+        userName_sidebar.setText(truename); // Set the username textview in the sidebar
 
         @SuppressLint("CutPasteId") MenuItem settings = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.setting_item); // The setting item in the sidebar
         // Set the on click listener of the setting item
         settings.setOnMenuItemClickListener(item -> {
             MarkerSettingDialog.createMarkerSettingDialog(context, globalLat, globalLng, token, username,mMap);
+            return true;
+        });
+
+        @SuppressLint("CutPasteId") MenuItem about = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.about_item); // The about item in the sidebar
+        // Set the on click listener of the about item
+        about.setOnMenuItemClickListener(item -> {
+            AboutDialog.createAboutDialog(context);
             return true;
         });
 
