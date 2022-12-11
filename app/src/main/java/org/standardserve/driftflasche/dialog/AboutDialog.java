@@ -18,8 +18,6 @@ public class AboutDialog {
     public static void createAboutDialog(Context context){
         LayoutInflater inflater = LayoutInflater.from(context); // Get the layout inflater
         View view = inflater.inflate(R.layout.about_layout, null); // Inflate the layout
-
-
         AlertDialog builder = new MaterialAlertDialogBuilder(context)
                 .setView(view)
                 .setTitle("About")
