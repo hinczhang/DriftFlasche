@@ -1,8 +1,10 @@
 package org.standardserve.driftflasche.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -16,6 +18,8 @@ public class AboutDialog {
     public static void createAboutDialog(Context context){
         LayoutInflater inflater = LayoutInflater.from(context); // Get the layout inflater
         View view = inflater.inflate(R.layout.about_layout, null); // Inflate the layout
+
+
         AlertDialog builder = new MaterialAlertDialogBuilder(context)
                 .setView(view)
                 .setTitle("About")

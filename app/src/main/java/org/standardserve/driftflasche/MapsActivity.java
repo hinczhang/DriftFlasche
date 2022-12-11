@@ -39,6 +39,7 @@ import org.standardserve.driftflasche.dialog.MarkerCreationDialog;
 import org.standardserve.driftflasche.dialog.MarkerInfomationDialog;
 import org.standardserve.driftflasche.dialog.MarkerSettingDialog;
 import org.standardserve.driftflasche.dialog.MyBottlesDialog;
+import org.standardserve.driftflasche.dialog.ProfileDialog;
 import org.standardserve.driftflasche.dialog.bottlesReload;
 import org.standardserve.driftflasche.fileio.RootPath;
 import org.standardserve.driftflasche.fileio.TokenReadAndWrite;
@@ -101,10 +102,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView userName_sidebar = ((NavigationView) findViewById(R.id.nav_view)).inflateHeaderView(R.layout.sidebar_headerlayout).findViewById(R.id.username); // The username textview in the sidebar
         userName_sidebar.setText(truename); // Set the username textview in the sidebar
 
+        @SuppressLint("CutPasteId") MenuItem profile = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.profile_item); // The profile menu item
+        // Set the profile menu item click listener
+        profile.setOnMenuItemClickListener(item ->{
+            ProfileDialog.createProfileDialog(context, truename, username); // Create the profile dialog
+            return true;
+        });
+
         @SuppressLint("CutPasteId") MenuItem settings = ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.setting_item); // The setting item in the sidebar
         // Set the on click listener of the setting item
         settings.setOnMenuItemClickListener(item -> {
-            MarkerSettingDialog.createMarkerSettingDialog(context, globalLat, globalLng, token, username,mMap);
+            MarkerSettingDialog.createMarkerSettingDialog(context, globalLat, globalLng, token, username,mMap); // Create the marker setting dialog
             return true;
         });
 

@@ -67,4 +67,8 @@
 
     <!-- SnakeBar text -->
     <string name="localization_success"> Localization Successful! </string>
+
+    <!-- Profile -->
+    <string name="username"> Username: </string>
+    <string name="email"> Email: </string>
 </resources>
