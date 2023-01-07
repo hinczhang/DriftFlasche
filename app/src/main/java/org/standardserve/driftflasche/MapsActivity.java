@@ -56,6 +56,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
 /*
 * MapsActivity: The main activity of the app. It is the map and the main menu.
 * */
@@ -144,7 +145,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .add("username", username)
                     .add("mode", "mybottle")
                 .build();
-            String url = "http://138.68.65.184:5000/api/bottle";
+            String url = "http://94.16.106.19:5000/api/bottle";
             Request request = new Request.Builder()
                     .url(url)
                     .post(formBody)
@@ -195,7 +196,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Button bottleButton = findViewById(R.id.bottleButton); // The bottle button
         if(isDayOrNight()){
-            bottleButton.setBackgroundColor(getResources().getColor(R.color.md_theme_dark_error)); // Set the background color of the bottle button for day
+            bottleButton.setBackgroundColor(getResources().getColor(R.color.md_theme_dark_onTertiary)); // Set the background color of the bottle button for day
         }else{
             bottleButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_surfaceTint)); // Set the background color of the bottle button for night
         }
@@ -265,6 +266,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @NonNull
             @Override
             public CancellationToken onCanceledRequested(@NonNull OnTokenCanceledListener onTokenCanceledListener) {
+                onTokenCanceledListener.onCanceled();
                 return null;
             }
             @Override

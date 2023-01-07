@@ -83,7 +83,7 @@ public class MarkerCreationDialog {
                             .add("token", token)
                             .add("mode", "add")
                             .build();
-                    String url = "http://138.68.65.184:5000/api/bottle";
+                    String url = "http://94.16.106.19:5000/api/bottle";
                     Request request = new Request.Builder()
                             .url(url)
                             .post(formBody)

@@ -10,6 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/about_content"
-        android:textSize="15sp"
-        android:fontFamily="@font/heebo_variablefont_wght"/>
+        android:textSize="16sp"
+        android:fontFamily="@font/arimo_variablefont_wght"/>
 </LinearLayout>

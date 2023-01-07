@@ -135,7 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (textValidation.emailValidation(email) && textValidation.passwordValidation(password) && textValidation.repeatPasswordValidation(password, repeatPassword) && textValidation.truenameValidation(truename)) {
                 // if all the input fields are valid, send the registration request to the server
                 RootPath.setContext(context);
-                String url = "http://138.68.65.184:5000/api/login";
+                String url = "http://94.16.106.19:5000/api/login";
                 OkHttpClient mOKHttpClient = new OkHttpClient();
                 RequestBody formBody = new FormBody.Builder()
                         .add("mode", "register")

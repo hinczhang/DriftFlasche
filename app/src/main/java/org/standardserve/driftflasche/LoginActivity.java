@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     private void checkTokenLogin(){
         RootPath.setContext(context);
         String token = TokenReadAndWrite.readToken(RootPath.getCacheDir());
-        String url = "http://138.68.65.184:5000/api/login";
+        String url = "http://94.16.106.19:5000/api/login";
         OkHttpClient mOKHttpClient = new OkHttpClient();
         RequestBody formBody = new FormBody.Builder()
                 .add("mode", "token")
@@ -185,7 +185,7 @@ public class LoginActivity extends AppCompatActivity {
             // If the email and password are valid, the login request will be sent.
             if (textValidation.emailValidation(email) && textValidation.passwordValidation(password)) {
                 RootPath.setContext(context);
-                String url = "http://138.68.65.184:5000/api/login";
+                String url = "http://94.16.106.19:5000/api/login";
 
                 OkHttpClient mOKHttpClient = new OkHttpClient();
                 RequestBody formBody = new FormBody.Builder()
