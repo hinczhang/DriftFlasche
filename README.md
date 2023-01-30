@@ -13,4 +13,4 @@ Idea from @Ezie. Users can drop drift bottles around their location. Drift bottl
 <img src="https://user-images.githubusercontent.com/70082542/215544395-001df2d5-aa33-4cc1-82a0-20e9eafa1362.jpg" width="300px">
 
 ### Password encryption
-<img src="https://user-images.githubusercontent.com/70082542/215543565-76117383-f189-4aba-a3df-96ca75749f0f.png" width="300px">
+<img src="https://user-images.githubusercontent.com/70082542/215543565-76117383-f189-4aba-a3df-96ca75749f0f.png" width="800px">
