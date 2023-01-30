@@ -4,8 +4,9 @@ Idea from @Ezie. Users can drop drift bottles around their location. Drift bottl
 
 ## Hidden functions
 ### Automatic login and keep for 24 hours
-<img src="https://user-images.githubusercontent.com/70082542/215543940-1e0a8eba-a4c4-4dce-8327-6cd3bac88b91.jpg" width="300px">
+<img src="https://user-images.githubusercontent.com/70082542/215543940-1e0a8eba-a4c4-4dce-8327-6cd3bac88b91.jpg" width="300px">  
 ### Daytime and nighttime
+<img src="https://user-images.githubusercontent.com/70082542/215544368-9004fd7c-bac7-49cd-bd61-0dec3398cf87.jpg" width="300px">  
 ![705811ab385d7325ab7e48a9eae32b8](https://user-images.githubusercontent.com/70082542/215544368-9004fd7c-bac7-49cd-bd61-0dec3398cf87.jpg)
 ![60d8e9b758134f9a054a5fa182886ab](https://user-images.githubusercontent.com/70082542/215544686-b7fac4f9-e088-4981-9648-05dde36277a1.jpg)
 ### Logout
