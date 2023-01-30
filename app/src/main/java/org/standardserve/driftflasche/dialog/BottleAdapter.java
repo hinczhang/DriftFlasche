@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.standardserve.driftflasche.R;
+import org.standardserve.driftflasche.network.NetworkAccess;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -101,7 +102,7 @@ public class BottleAdapter extends RecyclerView.Adapter<BottleAdapter.ViewHolder
                         .add("mode", "delete")
                         .add("username", username)
                         .build();
-                String url = "http://94.16.106.19:5000/api/bottle";
+                String url = NetworkAccess.getBOTTLEAccess();
                 Request request = new Request.Builder()
                         .url(url)
                         .post(formBody)

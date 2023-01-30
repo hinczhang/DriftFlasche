@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.standardserve.driftflasche.fileio.RootPath;
 import org.standardserve.driftflasche.login.textValidation;
+import org.standardserve.driftflasche.network.NetworkAccess;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -135,7 +136,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (textValidation.emailValidation(email) && textValidation.passwordValidation(password) && textValidation.repeatPasswordValidation(password, repeatPassword) && textValidation.truenameValidation(truename)) {
                 // if all the input fields are valid, send the registration request to the server
                 RootPath.setContext(context);
-                String url = "http://94.16.106.19:5000/api/login";
+                String url = NetworkAccess.getLOGINAccess();
                 OkHttpClient mOKHttpClient = new OkHttpClient();
                 RequestBody formBody = new FormBody.Builder()
                         .add("mode", "register")

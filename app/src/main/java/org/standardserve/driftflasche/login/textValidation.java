@@ -8,6 +8,8 @@ import java.util.Objects;
 // Class to validate text input
 public class textValidation {
 
+    private textValidation(){}
+
     // Method to validate email
     public static boolean emailValidation(String email) {
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();

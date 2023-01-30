@@ -27,6 +27,7 @@ import okhttp3.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.standardserve.driftflasche.R;
+import org.standardserve.driftflasche.network.NetworkAccess;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -83,7 +84,7 @@ public class MarkerCreationDialog {
                             .add("token", token)
                             .add("mode", "add")
                             .build();
-                    String url = "http://94.16.106.19:5000/api/bottle";
+                    String url = NetworkAccess.getBOTTLEAccess();
                     Request request = new Request.Builder()
                             .url(url)
                             .post(formBody)

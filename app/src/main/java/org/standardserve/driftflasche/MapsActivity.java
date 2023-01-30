@@ -43,6 +43,7 @@ import org.standardserve.driftflasche.dialog.ProfileDialog;
 import org.standardserve.driftflasche.dialog.bottlesReload;
 import org.standardserve.driftflasche.fileio.RootPath;
 import org.standardserve.driftflasche.fileio.TokenReadAndWrite;
+import org.standardserve.driftflasche.network.NetworkAccess;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -145,7 +146,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .add("username", username)
                     .add("mode", "mybottle")
                 .build();
-            String url = "http://94.16.106.19:5000/api/bottle";
+            String url = NetworkAccess.getBOTTLEAccess();
             Request request = new Request.Builder()
                     .url(url)
                     .post(formBody)

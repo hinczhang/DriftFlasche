@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -29,6 +28,7 @@ import org.standardserve.driftflasche.fileio.RootPath;
 import org.standardserve.driftflasche.fileio.TokenReadAndWrite;
 
 import org.standardserve.driftflasche.login.textValidation;
+import org.standardserve.driftflasche.network.NetworkAccess;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     private void checkTokenLogin(){
         RootPath.setContext(context);
         String token = TokenReadAndWrite.readToken(RootPath.getCacheDir());
-        String url = "http://94.16.106.19:5000/api/login";
+        String url = NetworkAccess.getLOGINAccess();
         OkHttpClient mOKHttpClient = new OkHttpClient();
         RequestBody formBody = new FormBody.Builder()
                 .add("mode", "token")
@@ -185,7 +185,7 @@ public class LoginActivity extends AppCompatActivity {
             // If the email and password are valid, the login request will be sent.
             if (textValidation.emailValidation(email) && textValidation.passwordValidation(password)) {
                 RootPath.setContext(context);
-                String url = "http://94.16.106.19:5000/api/login";
+                String url = NetworkAccess.getLOGINAccess();
 
                 OkHttpClient mOKHttpClient = new OkHttpClient();
                 RequestBody formBody = new FormBody.Builder()
